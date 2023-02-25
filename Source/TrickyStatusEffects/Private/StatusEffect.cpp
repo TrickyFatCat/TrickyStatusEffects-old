@@ -42,16 +42,26 @@ void UStatusEffect::BeginDestroy()
 	OnStatusEffectDeactivated.Clear();
 }
 
-void UStatusEffect::ActivateEffect_Implementation()
+void UStatusEffect::SetInstigator(AActor* Instigator)
 {
-}
-
-void UStatusEffect::DeactivateEffect_Implementation()
-{
+	StatusEffectData.Instigator = Instigator;
 }
 
 void UStatusEffect::FinishEffect()
 {
 	DeactivateEffect();
 	this->ConditionalBeginDestroy();
+}
+
+bool UStatusEffect::GetIsUnique() const
+{
+	return StatusEffectData.bIsUnique;
+}
+
+void UStatusEffect::ActivateEffect_Implementation()
+{
+}
+
+void UStatusEffect::DeactivateEffect_Implementation()
+{
 }

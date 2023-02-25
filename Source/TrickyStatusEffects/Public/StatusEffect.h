@@ -80,6 +80,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStatusEffectDeactivatedSignature OnStatusEffectDeactivated;
 
+	void SetInstigator(AActor* Instigator);
+	
+	void FinishEffect();
+
+	bool GetIsUnique() const;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="StatusEffect")
 	FStatusEffectData StatusEffectData;
@@ -93,7 +99,5 @@ protected:
 	void DeactivateEffect();
 
 	virtual void DeactivateEffect_Implementation();
-
-private:
-	void FinishEffect();
+	
 };
