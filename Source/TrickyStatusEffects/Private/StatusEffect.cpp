@@ -15,7 +15,7 @@ void UStatusEffect::PostInitProperties()
 
 	if (World && !World->IsPreviewWorld())
 	{
-		if (!StatusEffectData.bIsInfinite)
+		if (!StatusEffectData.bInfiniteDuration)
 		{
 			World->GetTimerManager().SetTimer(StatusEffectData.DurationTimerHandle,
 			                                  this,

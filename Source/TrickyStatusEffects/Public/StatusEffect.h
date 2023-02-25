@@ -16,28 +16,36 @@ enum class EStatusEffectType : uint8
 	Negative
 };
 
+UENUM(BlueprintType)
+enum class EReActivationBehavior: uint8
+{
+	None,
+	Reset,
+	Add
+};
+
 USTRUCT(BlueprintType)
 struct FStatusEffectData
 {
 	GENERATED_BODY()
 
+	UPROPERTY(BlueprintReadOnly, Category="StatusEffect")
+	AActor* Instigator = nullptr;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	EStatusEffectType EffectType = EStatusEffectType::Positive;
 
-	UPROPERTY(BlueprintReadOnly, Category="StatusEffect")
-	AActor* Instigator = nullptr;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bIsInfinite"))
+	EReActivationBehavior ReActivationBehavior = EReActivationBehavior::Reset;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	bool bIsUnique = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
-	bool bIsInfinite = false;
+	bool bInfiniteDuration = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bIsInfinite"))
 	float Duration = 5.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bIsInfinite"))
-	bool bResetTimeOnAdd;
 
 	UPROPERTY(BlueprintReadOnly, Category="StatusEffect")
 	FTimerHandle DurationTimerHandle;
@@ -48,8 +56,6 @@ struct FStatusEffectData
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	int32 CurrentStacks = 0;
 };
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectActivatedSignature, class UStatusEffect*, StatusEffect);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectDeactivatedSignature, class UStatusEffect*, StatusEffect);
 
@@ -71,9 +77,6 @@ protected:
 
 
 public:
-	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
-	FOnStatusEffectActivatedSignature OnStatusEffectActivated;
-
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStatusEffectDeactivatedSignature OnStatusEffectDeactivated;
 
