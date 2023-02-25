@@ -5,19 +5,25 @@
 
 UStatusEffect::UStatusEffect()
 {
+}
+
+void UStatusEffect::PostInitProperties()
+{
+	UObject::PostInitProperties();
+
 	const UWorld* World = UObject::GetWorld();
 
-	if (World && World->IsGameWorld() && !World->IsPreviewWorld() && !World->IsEditorWorld())
+	if (World && !World->IsPreviewWorld())
 	{
 		if (!StatusEffectData.bIsInfinite)
 		{
 			World->GetTimerManager().SetTimer(StatusEffectData.DurationTimerHandle,
 			                                  this,
-			                                  &UStatusEffect::DeactivateEffect,
+			                                  &UStatusEffect::FinishEffect,
 			                                  StatusEffectData.Duration);
 		}
 
-		OnStatusEffectActivated.Broadcast(this);
+		ActivateEffect();
 	}
 }
 
@@ -26,13 +32,14 @@ void UStatusEffect::BeginDestroy()
 	UObject::BeginDestroy();
 
 	const UWorld* World = GetWorld();
-	
+
 	if (World)
 	{
 		GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 	}
 
 	OnStatusEffectDeactivated.Broadcast(this);
+	OnStatusEffectDeactivated.Clear();
 }
 
 void UStatusEffect::ActivateEffect_Implementation()
@@ -41,5 +48,10 @@ void UStatusEffect::ActivateEffect_Implementation()
 
 void UStatusEffect::DeactivateEffect_Implementation()
 {
-	this->BeginDestroy();
+}
+
+void UStatusEffect::FinishEffect()
+{
+	DeactivateEffect();
+	this->ConditionalBeginDestroy();
 }

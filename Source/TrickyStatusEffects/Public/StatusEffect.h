@@ -7,6 +7,7 @@
 #include "StatusEffect.generated.h"
 
 struct FTimerHandle;
+class AActor;
 
 UENUM(BlueprintType)
 enum class EStatusEffectType : uint8
@@ -22,6 +23,12 @@ struct FStatusEffectData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	EStatusEffectType EffectType = EStatusEffectType::Positive;
+
+	UPROPERTY(BlueprintReadOnly, Category="StatusEffect")
+	AActor* Instigator = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
+	bool bIsUnique = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	bool bIsInfinite = false;
@@ -49,7 +56,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectDeactivatedSignature,
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class TRICKYSTATUSEFFECTS_API UStatusEffect : public UObject
 {
 	GENERATED_BODY()
@@ -58,14 +65,19 @@ public:
 	UStatusEffect();
 
 protected:
+	virtual void PostInitProperties() override;
+	
 	virtual void BeginDestroy() override;
 
+
+public:
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStatusEffectActivatedSignature OnStatusEffectActivated;
 
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStatusEffectDeactivatedSignature OnStatusEffectDeactivated;
-	
+
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="StatusEffect")
 	FStatusEffectData StatusEffectData;
 	
@@ -78,4 +90,7 @@ protected:
 	void DeactivateEffect();
 
 	virtual void DeactivateEffect_Implementation();
+
+private:
+	void FinishEffect();
 };
