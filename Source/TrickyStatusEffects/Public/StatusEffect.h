@@ -17,7 +17,7 @@ enum class EStatusEffectType : uint8
 };
 
 UENUM(BlueprintType)
-enum class EReActivationBehavior : uint8
+enum class ERestartBehavior : uint8
 {
 	Custom,
 	Reset,
@@ -59,7 +59,7 @@ struct FStatusEffectData
 	FTimerHandle DurationTimerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bInfiniteDuration"))
-	EReActivationBehavior ReActivationBehavior = EReActivationBehavior::Reset;
+	ERestartBehavior ReActivationBehavior = ERestartBehavior::Reset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	bool bIsStackable = false;
@@ -107,7 +107,7 @@ public:
 
 	void FinishEffect();
 	
-	void ReActivateEffect();
+	void ReStartEffect();
 
 	AActor* GetInstigator() const { return StatusEffectData.Instigator; }
 

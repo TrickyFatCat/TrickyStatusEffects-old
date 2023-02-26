@@ -23,7 +23,6 @@ void UStatusEffect::BeginDestroy()
 		GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 	}
 
-	OnStatusEffectDeactivated.Broadcast(this);
 	OnStatusEffectDeactivated.Clear();
 }
 
@@ -49,10 +48,11 @@ void UStatusEffect::StartEffect()
 void UStatusEffect::FinishEffect()
 {
 	DeactivateEffect();
+	OnStatusEffectDeactivated.Broadcast(this);
 	this->ConditionalBeginDestroy();
 }
 
-void UStatusEffect::ReActivateEffect()
+void UStatusEffect::ReStartEffect()
 {
 	const UWorld* World = GetWorld();
 
@@ -65,10 +65,10 @@ void UStatusEffect::ReActivateEffect()
 
 	switch (StatusEffectData.ReActivationBehavior)
 	{
-	case EReActivationBehavior::Custom:
+	case ERestartBehavior::Custom:
 		break;
 
-	case EReActivationBehavior::Add:
+	case ERestartBehavior::Add:
 		if (TimerManager.IsTimerActive(StatusEffectData.DurationTimerHandle))
 		{
 			const float DeltaDuration = GetRemainingTime();
@@ -81,7 +81,7 @@ void UStatusEffect::ReActivateEffect()
 		}
 		break;
 
-	case EReActivationBehavior::Reset:
+	case ERestartBehavior::Reset:
 		if (TimerManager.IsTimerActive(StatusEffectData.DurationTimerHandle))
 		{
 			TimerManager.ClearTimer(StatusEffectData.DurationTimerHandle);
