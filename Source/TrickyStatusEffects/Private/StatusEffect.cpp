@@ -56,6 +56,8 @@ void UStatusEffect::ReStartEffect()
 {
 	const UWorld* World = GetWorld();
 
+	ReActivateEffect();
+
 	if (!World)
 	{
 		return;
@@ -160,5 +162,17 @@ void UStatusEffect::ActivateEffect_Implementation()
 }
 
 void UStatusEffect::DeactivateEffect_Implementation()
+{
+}
+
+void UStatusEffect::ReActivateEffect_Implementation()
+{
+}
+
+void UStatusEffect::StacksIncreased_Implementation(const int32 Amount)
+{
+}
+
+void UStatusEffect::StacksDecreased_Implementation(const int32 Amount)
 {
 }

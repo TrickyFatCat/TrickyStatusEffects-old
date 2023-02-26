@@ -146,4 +146,19 @@ protected:
 	void DeactivateEffect();
 
 	virtual void DeactivateEffect_Implementation();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
+	void ReActivateEffect();
+	
+	virtual void ReActivateEffect_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
+	void StacksIncreased(const int32 Amount);
+
+	virtual void StacksIncreased_Implementation(const int32 Amount);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
+	void StacksDecreased(const int32 Amount);
+
+	virtual void StacksDecreased_Implementation(const int32 Amount);
 };

@@ -26,16 +26,18 @@ public:
 	bool RemoveAllEffects();
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	bool RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
+	bool RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass, const bool bIgnoreStacks = true);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveAllEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	bool RemoveEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
+	bool RemoveEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
+	                                     const AActor* Instigator,
+	                                     const bool bIgnoreStacks = true);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	bool RemoveAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
+	bool RemoveAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
 
 	bool HasEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
 
