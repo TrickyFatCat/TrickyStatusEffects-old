@@ -7,8 +7,26 @@
 
 UStatusEffectsManagerComponent::UStatusEffectsManagerComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
-	UActorComponent::SetComponentTickEnabled(false);
+	PrimaryComponentTick.bCanEverTick = true;
+	UActorComponent::SetComponentTickEnabled(true);
+}
+
+void UStatusEffectsManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                                   FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (ActiveEffects.Num() > 0 && GEngine)
+	{
+		for (int32 i = 0; i < ActiveEffects.Num(); ++i)
+		{
+			UStatusEffect* Effect = ActiveEffects[i];
+			FString Message = FString::Printf(
+				TEXT("%s | %hhd | %f | %d/%d"), *Effect->GetName(), Effect->GetEffectType(), Effect->GetRemainingTime(),
+				Effect->GetCurrentStacks(), Effect->GetMaxStacks());
+			GEngine->AddOnScreenDebugMessage(i, DeltaTime, FColor::Purple, Message);
+		}
+	}
 }
 
 void UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator)
@@ -22,6 +40,10 @@ void UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> 
 
 	if (NewEffect->GetIsUnique() && HasEffectOfClass(EffectClass))
 	{
+		if (NewEffect->IsStackable())
+		{
+			GetEffectOfClass(EffectClass)->AddStacks(1);
+		}
 		UE_LOG(LogTemp, Error, TEXT("Unique effect"));
 		return;
 	}
@@ -33,18 +55,34 @@ void UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> 
 		return;
 	}
 
-	NewEffect->SetInstigator(Instigator);
+	if (!NewEffect->GetIsUnique())
+	{
+		NewEffect->SetInstigator(Instigator);
+	}
+
+	NewEffect->SetTargetActor(GetOwner());
 	NewEffect->OnStatusEffectDeactivated.AddDynamic(this, &UStatusEffectsManagerComponent::HandleEffectDeactivation);
 	ActiveEffects.Emplace(NewEffect);
+	NewEffect->StartEffect();
 }
 
 bool UStatusEffectsManagerComponent::HasEffectOfClass(const TSubclassOf<UStatusEffect> EffectClass)
 {
-	bool bHasEffect = false;
+	if (!EffectClass || ActiveEffects.Num() == 0)
+	{
+		return false;
+	}
+
+	return IsValid(GetEffectOfClass(EffectClass));
+}
+
+UStatusEffect* UStatusEffectsManagerComponent::GetEffectOfClass(TSubclassOf<UStatusEffect> EffectClass)
+{
+	UStatusEffect* StatusEffect = nullptr;
 
 	if (!EffectClass || ActiveEffects.Num() == 0)
 	{
-		return bHasEffect;
+		return StatusEffect;
 	}
 
 	for (const auto& Effect : ActiveEffects)
@@ -55,12 +93,11 @@ bool UStatusEffectsManagerComponent::HasEffectOfClass(const TSubclassOf<UStatusE
 		}
 		if (EffectClass == Effect->GetClass())
 		{
-			bHasEffect = true;
+			StatusEffect = Effect;
 			break;
 		}
 	}
-
-	return bHasEffect;
+	return StatusEffect;
 }
 
 void UStatusEffectsManagerComponent::HandleEffectDeactivation(UStatusEffect* StatusEffect)

@@ -16,10 +16,14 @@ class TRICKYSTATUSEFFECTS_API UStatusEffectsManagerComponent : public UActorComp
 public:	
 	UStatusEffectsManagerComponent();
 
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	void AddEffect(TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
 
 	bool HasEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
+
+	UStatusEffect* GetEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StatusEffectsManager")
