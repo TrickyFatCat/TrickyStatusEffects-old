@@ -189,6 +189,17 @@ bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClassByInstigator(TSubcla
 	return bSuccess;
 }
 
+bool UStatusEffectsManagerComponent::RemoveEffectByObject(UStatusEffect* StatusEffect, const bool bIgnoreStacks)
+{
+	if (!IsValid(StatusEffect) || ActiveEffects.Num() == 0 || !ActiveEffects.Contains(StatusEffect))
+	{
+		return false;
+	}
+
+	bIgnoreStacks ? StatusEffect->FinishEffect() : StatusEffect->RemoveStacks();
+	return true;
+}
+
 bool UStatusEffectsManagerComponent::HasEffectOfClass(const TSubclassOf<UStatusEffect> EffectClass)
 {
 	if (!EffectClass || ActiveEffects.Num() == 0)

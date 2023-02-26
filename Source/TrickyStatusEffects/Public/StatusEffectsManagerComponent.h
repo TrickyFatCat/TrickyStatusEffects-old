@@ -45,6 +45,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
 
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool RemoveEffectByObject(UStatusEffect* StatusEffect, const bool bIgnoreStacks = true);
 
 	bool HasEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
 
