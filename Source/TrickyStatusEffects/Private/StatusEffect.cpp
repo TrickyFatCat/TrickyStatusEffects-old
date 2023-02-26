@@ -60,7 +60,7 @@ void UStatusEffect::ReStartEffect()
 
 	FTimerManager& TimerManager = World->GetTimerManager();
 
-	switch (StatusEffectData.ReActivationBehavior)
+	switch (StatusEffectData.ReStartBehavior)
 	{
 	case ERestartBehavior::Custom:
 		break;

@@ -59,7 +59,7 @@ struct FStatusEffectData
 	FTimerHandle DurationTimerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bInfiniteDuration"))
-	ERestartBehavior ReActivationBehavior = ERestartBehavior::Reset;
+	ERestartBehavior ReStartBehavior = ERestartBehavior::Reset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	bool bIsStackable = false;
@@ -106,7 +106,7 @@ public:
 	void FinishEffect();
 	
 	void ReStartEffect();
-
+	
 	AActor* GetInstigator() const { return StatusEffectData.Instigator; }
 
 	void SetInstigator(AActor* Instigator) { StatusEffectData.Instigator = Instigator; }
@@ -120,6 +120,8 @@ public:
 	EStatusEffectUniqueness GetUniqueness() const { return StatusEffectData.EffectUniqueness; }
 
 	float GetRemainingTime() const;
+
+	ERestartBehavior GetRestartBehavior() const { return StatusEffectData.ReStartBehavior; }
 
 	bool IsStackable() const { return StatusEffectData.bIsStackable; }
 
