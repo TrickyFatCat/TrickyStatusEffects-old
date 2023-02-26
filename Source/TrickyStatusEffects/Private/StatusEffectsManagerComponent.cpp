@@ -33,7 +33,7 @@ void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
 				                               ? Effect->GetInstigator()->GetName()
 				                               : "NONE";
 			FString Message = FString::Printf(
-				TEXT("| Effect: %s |\n| Instigator: %s |\n| Uniqueness: %s |\n| Time Remaining: %s |\n| Stacks: %d/%d"),
+				TEXT("| Effect: %s |\n| Instigator: %s |\n| Uniqueness: %s |\n| Time Remaining: %s |\n| Stacks: %d/%d|"),
 				*Effect->GetName(),
 				*InstigatorName,
 				*UEnum::GetDisplayValueAsText(Effect->GetUniqueness()).ToString(),
@@ -53,7 +53,8 @@ void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
 				Color = FColor::Orange;
 				break;
 			}
-			GEngine->AddOnScreenDebugMessage(i, DeltaTime, Color, Message);
+			
+			GEngine->AddOnScreenDebugMessage(i, DeltaTime, Color, Message, false);
 		}
 	}
 }
@@ -171,7 +172,7 @@ bool UStatusEffectsManagerComponent::RemoveEffectOfClassByInstigator(TSubclassOf
                                                                      const AActor* Instigator,
                                                                      const bool bIgnoreStacks)
 {
-	if (!EffectClass || !IsValid(Instigator))
+	if (!EffectClass || ActiveEffects.Num() == 0)
 	{
 		return false;
 	}
@@ -192,7 +193,7 @@ bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClassByInstigator(TSubcla
 {
 	bool bSuccess = false;
 
-	if (!EffectClass || !IsValid(Instigator) || !HasEffectOfClassByInstigator(EffectClass, Instigator))
+	if (!EffectClass || ActiveEffects.Num() == 0 || !HasEffectOfClassByInstigator(EffectClass, Instigator))
 	{
 		return bSuccess;
 	}
