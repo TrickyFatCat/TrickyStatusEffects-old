@@ -22,11 +22,12 @@ void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
 		for (int32 i = 0; i < ActiveEffects.Num(); ++i)
 		{
 			const UStatusEffect* Effect = ActiveEffects[i];
+			const float RemainingTime = FMath::RoundToInt(Effect->GetRemainingTime() * 100) / 100.f;
 			FString Message = FString::Printf(
 				TEXT("%s | %s | %s | %d/%d"),
 				*Effect->GetName(),
 				*UEnum::GetDisplayValueAsText(Effect->GetUniqueness()).ToString(),
-				*FString::SanitizeFloat(Effect->GetRemainingTime(), 3),
+				*FString::SanitizeFloat(RemainingTime, 2),
 				Effect->GetCurrentStacks(),
 				Effect->GetMaxStacks());
 
@@ -74,11 +75,34 @@ void UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> 
 	if (IsValid(Effect) && EffectUniqueness != EStatusEffectUniqueness::Normal)
 	{
 		Effect->AddStacks(1);
-		Effect->ReActivateEffect();
+		Effect->ReStartEffect();
 		return;
 	}
 
 	CreateEffect(EffectClass, Instigator);
+}
+
+bool UStatusEffectsManagerComponent::RemoveAllEffects()
+{
+	if (ActiveEffects.Num() == 0)
+	{
+		return false;
+	}
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect))
+		{
+			continue;
+		}
+
+		Effect->OnStatusEffectDeactivated.Clear();
+		Effect->FinishEffect();
+	}
+
+	ActiveEffects.Empty();
+
+	return true;
 }
 
 bool UStatusEffectsManagerComponent::RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass)
@@ -88,7 +112,7 @@ bool UStatusEffectsManagerComponent::RemoveEffectOfClass(TSubclassOf<UStatusEffe
 		return false;
 	}
 
-	UStatusEffect* Effect = GetEffectOfClass(EffectClass)
+	UStatusEffect* Effect = GetEffectOfClass(EffectClass);
 
 	if (!IsValid(Effect))
 	{
@@ -102,20 +126,29 @@ bool UStatusEffectsManagerComponent::RemoveEffectOfClass(TSubclassOf<UStatusEffe
 bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass)
 {
 	bool bSuccess = false;
-	
+
 	if (!EffectClass || !HasEffectOfClass(EffectClass))
 	{
 		return bSuccess;
 	}
 
-	for (const auto& Effect : ActiveEffects)
+	const int32 Number = GetNumberOfEffectsOfClass(EffectClass);
+
+	if (Number <= 0)
 	{
-		if (!IsValid(Effect) || Effect->GetClass() != EffectClass)
+		return bSuccess;
+	}
+	
+	for (int32 i = 0; i < Number; ++i)
+	{
+		UStatusEffect* StatusEffect = GetEffectOfClass(EffectClass);
+
+		if (!IsValid(StatusEffect))
 		{
 			continue;
 		}
 
-		Effect->FinishEffect();
+		StatusEffect->FinishEffect();
 		bSuccess = true;
 	}
 
@@ -123,7 +156,7 @@ bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClass(TSubclassOf<UStatus
 }
 
 bool UStatusEffectsManagerComponent::RemoveEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
-                                                                    AActor* Instigator)
+                                                                     AActor* Instigator)
 {
 	if (!EffectClass || !IsValid(Instigator))
 	{
@@ -150,18 +183,27 @@ bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClassByInstigator(TSubcla
 	{
 		return bSuccess;
 	}
+	
+	const int32 Number = GetNumberOfEffectsOfClassByInstigator(EffectClass, Instigator);
 
-	for (const auto& Effect : ActiveEffects)
+	if (Number <= 0)
 	{
-		if (Effect->GetClass() != EffectClass || Effect->GetInstigator() != Instigator)
+		return bSuccess;
+	}
+	
+	for (int32 i = 0; i < Number; ++i)
+	{
+		UStatusEffect* StatusEffect = GetEffectOfClassByInstigator(EffectClass, Instigator);
+
+		if (!IsValid(StatusEffect))
 		{
 			continue;
 		}
 
-		Effect->FinishEffect();
+		StatusEffect->FinishEffect();
 		bSuccess = true;
 	}
-
+	
 	return bSuccess;
 }
 
@@ -260,4 +302,50 @@ void UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<UStatusEffec
 	NewEffect->OnStatusEffectDeactivated.AddDynamic(this, &UStatusEffectsManagerComponent::HandleEffectDeactivation);
 	ActiveEffects.Emplace(NewEffect);
 	NewEffect->StartEffect();
+}
+
+int32 UStatusEffectsManagerComponent::GetNumberOfEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass) const
+{
+	int32 Number = 0;
+	
+	if (!EffectClass || ActiveEffects.Num() == 0)
+	{
+		return Number;
+	}
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect) || Effect->GetClass() != EffectClass)
+		{
+			continue;
+		}
+
+		++Number;
+	}
+
+	return Number;
+}
+
+int32 UStatusEffectsManagerComponent::GetNumberOfEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
+                                                                            const AActor* Instigator)
+{
+	
+	int32 Number = 0;
+	
+	if (!EffectClass || ActiveEffects.Num() == 0)
+	{
+		return Number;
+	}
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect) || Effect->GetClass() != EffectClass || Effect->GetInstigator() != Instigator)
+		{
+			continue;
+		}
+
+		++Number;
+	}
+
+	return Number;
 }
