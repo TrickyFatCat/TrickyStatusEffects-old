@@ -325,6 +325,7 @@ void UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<UStatusEffec
 	NewEffect->OnStatusEffectDeactivated.AddDynamic(this, &UStatusEffectsManagerComponent::HandleEffectDeactivation);
 	ActiveEffects.Emplace(NewEffect);
 	NewEffect->StartEffect();
+	OnStatusEffectAdded.Broadcast(NewEffect, GetOwner(), Instigator);
 }
 
 int32 UStatusEffectsManagerComponent::GetNumberOfEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass) const

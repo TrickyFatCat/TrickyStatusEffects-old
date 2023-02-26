@@ -7,6 +7,9 @@
 #include "StatusEffectsManagerComponent.generated.h"
 
 class UStatusEffect;
+class AActor;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnStatusEffectAddedSignature, UStatusEffect*, StatusEffect, AActor*, Target, AActor*, Instigator);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYSTATUSEFFECTS_API UStatusEffectsManagerComponent : public UActorComponent
@@ -19,6 +22,9 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(BlueprintAssignable, Category="StatusEffectsManager")
+	FOnStatusEffectAddedSignature OnStatusEffectAdded;
+	
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	void AddEffect(TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
 
@@ -38,6 +44,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
+
 
 	bool HasEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
 
