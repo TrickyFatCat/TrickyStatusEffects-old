@@ -271,7 +271,7 @@ UStatusEffect* UStatusEffectsManagerComponent::GetEffectOfClassByInstigator(TSub
 {
 	UStatusEffect* StatusEffect = nullptr;
 
-	if (!EffectClass || !IsValid(Instigator))
+	if (!EffectClass || ActiveEffects.Num() == 0)
 	{
 		return StatusEffect;
 	}
