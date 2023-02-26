@@ -7,11 +7,6 @@ UStatusEffect::UStatusEffect()
 {
 }
 
-void UStatusEffect::PostInitProperties()
-{
-	UObject::PostInitProperties();
-}
-
 void UStatusEffect::BeginDestroy()
 {
 	UObject::BeginDestroy();

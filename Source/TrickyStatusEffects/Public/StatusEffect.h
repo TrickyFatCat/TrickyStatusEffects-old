@@ -89,8 +89,6 @@ public:
 	UStatusEffect();
 
 protected:
-	virtual void PostInitProperties() override;
-
 	virtual void BeginDestroy() override;
 
 public:
