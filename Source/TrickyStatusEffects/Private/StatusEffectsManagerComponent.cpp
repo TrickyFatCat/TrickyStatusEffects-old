@@ -11,7 +11,8 @@ UStatusEffectsManagerComponent::UStatusEffectsManagerComponent()
 	UActorComponent::SetComponentTickEnabled(true);
 }
 
-void UStatusEffectsManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
+                                                   ELevelTick TickType,
                                                    FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -20,11 +21,28 @@ void UStatusEffectsManagerComponent::TickComponent(float DeltaTime, ELevelTick T
 	{
 		for (int32 i = 0; i < ActiveEffects.Num(); ++i)
 		{
-			UStatusEffect* Effect = ActiveEffects[i];
+			const UStatusEffect* Effect = ActiveEffects[i];
 			FString Message = FString::Printf(
-				TEXT("%s | %hhd | %f | %d/%d"), *Effect->GetName(), Effect->GetEffectType(), Effect->GetRemainingTime(),
-				Effect->GetCurrentStacks(), Effect->GetMaxStacks());
-			GEngine->AddOnScreenDebugMessage(i, DeltaTime, FColor::Purple, Message);
+				TEXT("%s | %hhd | %f | %d/%d"),
+				*Effect->GetName(),
+				Effect->GetEffectType(),
+				Effect->GetRemainingTime(),
+				Effect->GetCurrentStacks(),
+				Effect->GetMaxStacks());
+
+			FColor Color;
+
+			switch (Effect->GetEffectType())
+			{
+			case EStatusEffectType::Positive:
+				Color = FColor::Emerald;
+				break;
+
+			case EStatusEffectType::Negative:
+				Color = FColor::Orange;
+				break;
+			}
+			GEngine->AddOnScreenDebugMessage(i, DeltaTime, Color, Message);
 		}
 	}
 }
@@ -36,34 +54,22 @@ void UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> 
 		return;
 	}
 
-	UStatusEffect* NewEffect = EffectClass.GetDefaultObject();
+	UStatusEffect* Effect = EffectClass.GetDefaultObject();
 
-	if (NewEffect->GetIsUnique() && HasEffectOfClass(EffectClass))
+	if (Effect->GetUniqueness() == EStatusEffectUniqueness::PerTarget && HasEffectOfClass(EffectClass))
 	{
-		if (NewEffect->IsStackable())
+		Effect = GetEffectOfClass(EffectClass);
+		
+		if (Effect->IsStackable())
 		{
-			GetEffectOfClass(EffectClass)->AddStacks(1);
+			Effect->AddStacks(1);
 		}
-		UE_LOG(LogTemp, Error, TEXT("Unique effect"));
+
+		Effect->ReActivateEffect();
 		return;
 	}
 
-	NewEffect = NewObject<UStatusEffect>(this, EffectClass);
-
-	if (!NewEffect)
-	{
-		return;
-	}
-
-	if (!NewEffect->GetIsUnique())
-	{
-		NewEffect->SetInstigator(Instigator);
-	}
-
-	NewEffect->SetTargetActor(GetOwner());
-	NewEffect->OnStatusEffectDeactivated.AddDynamic(this, &UStatusEffectsManagerComponent::HandleEffectDeactivation);
-	ActiveEffects.Emplace(NewEffect);
-	NewEffect->StartEffect();
+	CreateEffect(EffectClass, Instigator);
 }
 
 bool UStatusEffectsManagerComponent::HasEffectOfClass(const TSubclassOf<UStatusEffect> EffectClass)
@@ -103,4 +109,29 @@ UStatusEffect* UStatusEffectsManagerComponent::GetEffectOfClass(TSubclassOf<USta
 void UStatusEffectsManagerComponent::HandleEffectDeactivation(UStatusEffect* StatusEffect)
 {
 	ActiveEffects.RemoveSingle(StatusEffect);
+}
+
+void UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator)
+{
+	if (!EffectClass)
+	{
+		return;
+	}
+	
+	UStatusEffect* NewEffect = NewObject<UStatusEffect>(this, EffectClass);
+
+	if (!NewEffect)
+	{
+		return;
+	}
+
+	if (NewEffect->GetUniqueness() != EStatusEffectUniqueness::PerTarget)
+	{
+		NewEffect->SetInstigator(Instigator);
+	}
+
+	NewEffect->SetTargetActor(GetOwner());
+	NewEffect->OnStatusEffectDeactivated.AddDynamic(this, &UStatusEffectsManagerComponent::HandleEffectDeactivation);
+	ActiveEffects.Emplace(NewEffect);
+	NewEffect->StartEffect();
 }

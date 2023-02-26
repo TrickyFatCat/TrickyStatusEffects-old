@@ -52,29 +52,46 @@ void UStatusEffect::FinishEffect()
 	this->ConditionalBeginDestroy();
 }
 
-void UStatusEffect::SetInstigator(AActor* Instigator)
+void UStatusEffect::ReActivateEffect()
 {
-	StatusEffectData.Instigator = Instigator;
-}
+	const UWorld* World = GetWorld();
 
-void UStatusEffect::SetTargetActor(AActor* TargetActor)
-{
-	StatusEffectData.TargetActor = TargetActor;
-}
+	if (!World)
+	{
+		return;
+	}
 
-bool UStatusEffect::GetIsUnique() const
-{
-	return StatusEffectData.bIsUnique;
-}
+	FTimerManager& TimerManager = World->GetTimerManager();
 
-AActor* UStatusEffect::GetInstigator() const
-{
-	return StatusEffectData.Instigator;
-}
+	switch (StatusEffectData.ReActivationBehavior)
+	{
+	case EReActivationBehavior::None:
+		break;
 
-EStatusEffectType UStatusEffect::GetEffectType() const
-{
-	return StatusEffectData.EffectType;
+	case EReActivationBehavior::Add:
+		if (TimerManager.IsTimerActive(StatusEffectData.DurationTimerHandle))
+		{
+			const float DeltaDuration = GetRemainingTime();
+			
+			TimerManager.ClearTimer(StatusEffectData.DurationTimerHandle);
+			TimerManager.SetTimer(StatusEffectData.DurationTimerHandle,
+			                      this,
+			                      &UStatusEffect::FinishEffect,
+			                      StatusEffectData.Duration + DeltaDuration);
+		}
+		break;
+
+	case EReActivationBehavior::Reset:
+		if (TimerManager.IsTimerActive(StatusEffectData.DurationTimerHandle))
+		{
+			TimerManager.ClearTimer(StatusEffectData.DurationTimerHandle);
+			TimerManager.SetTimer(StatusEffectData.DurationTimerHandle,
+			                      this,
+			                      &UStatusEffect::FinishEffect,
+			                      StatusEffectData.Duration);
+		}
+		break;
+	}
 }
 
 float UStatusEffect::GetRemainingTime() const
@@ -96,24 +113,9 @@ float UStatusEffect::GetRemainingTime() const
 	return RemainingTime;
 }
 
-bool UStatusEffect::IsStackable() const
-{
-	return StatusEffectData.MaxStacks > 1;
-}
-
-int32 UStatusEffect::GetMaxStacks() const
-{
-	return StatusEffectData.MaxStacks;
-}
-
-int32 UStatusEffect::GetCurrentStacks() const
-{
-	return StatusEffectData.CurrentStacks;
-}
-
 bool UStatusEffect::AddStacks(int32 Amount)
 {
-	if (StatusEffectData.CurrentStacks >= StatusEffectData.MaxStacks || StatusEffectData.MaxStacks == 1)
+	if (StatusEffectData.CurrentStacks >= StatusEffectData.MaxStacks || !StatusEffectData.bIsStackable)
 	{
 		return false;
 	}
@@ -132,7 +134,7 @@ bool UStatusEffect::AddStacks(int32 Amount)
 
 bool UStatusEffect::RemoveStacks(int32 Amount)
 {
-	if (StatusEffectData.CurrentStacks <= 0 || StatusEffectData.MaxStacks == 1)
+	if (StatusEffectData.CurrentStacks <= 0 || !StatusEffectData.bIsStackable)
 	{
 		return false;
 	}

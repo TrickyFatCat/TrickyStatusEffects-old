@@ -31,4 +31,7 @@ protected:
 
 	UFUNCTION()
 	void HandleEffectDeactivation(UStatusEffect* StatusEffect);
+
+private:
+	void CreateEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
 };
