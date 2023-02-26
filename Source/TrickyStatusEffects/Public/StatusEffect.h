@@ -19,7 +19,7 @@ enum class EStatusEffectType : uint8
 UENUM(BlueprintType)
 enum class EReActivationBehavior : uint8
 {
-	None,
+	Custom,
 	Reset,
 	Add
 };
@@ -64,7 +64,7 @@ struct FStatusEffectData
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	bool bIsStackable = false;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="bIsStackable", ClampMin=1))
 	int32 MaxStacks = 1;
 
 	UPROPERTY(VisibleAnywhere, Category="StatusEffect")

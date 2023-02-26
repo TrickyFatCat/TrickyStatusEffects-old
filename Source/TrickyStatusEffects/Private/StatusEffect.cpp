@@ -65,7 +65,7 @@ void UStatusEffect::ReActivateEffect()
 
 	switch (StatusEffectData.ReActivationBehavior)
 	{
-	case EReActivationBehavior::None:
+	case EReActivationBehavior::Custom:
 		break;
 
 	case EReActivationBehavior::Add:
