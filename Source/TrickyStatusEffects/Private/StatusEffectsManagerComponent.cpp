@@ -291,10 +291,11 @@ void UStatusEffectsManagerComponent::PrintDebugData(const float DeltaTime)
 				                               : "NONE";
 			FString Message = FString::Printf(
 				TEXT(
-					"| Effect: %s |\n| Instigator: %s |\n| Uniqueness: %s |\n| Time Remaining: %s |\n| Stacks: %d/%d|"),
+					"| Effect: %s |\n| Instigator: %s |\n| Uniqueness: %s |\n| Restart Behavior: %s |\n| Time Remaining: %s |\n| Stacks: %d/%d|"),
 				*Effect->GetName(),
 				*InstigatorName,
 				*UEnum::GetDisplayValueAsText(Effect->GetUniqueness()).ToString(),
+				*UEnum::GetDisplayValueAsText(Effect->GetRestartBehavior()).ToString(),
 				*FString::SanitizeFloat(RemainingTime, 2),
 				Effect->GetCurrentStacks(),
 				Effect->GetMaxStacks());
