@@ -29,8 +29,11 @@ struct FStatusEffectData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadOnly, Category="StatusEffect")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
 	AActor* Instigator = nullptr;
+	
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
+	AActor* TargetActor = nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	EStatusEffectType EffectType = EStatusEffectType::Positive;
@@ -51,14 +54,17 @@ struct FStatusEffectData
 	FTimerHandle DurationTimerHandle;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
-	int32 MaxStacks = 0;
+	int32 MaxStacks = 1;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StatusEffect")
-	int32 CurrentStacks = 0;
+	UPROPERTY(VisibleAnywhere, Category="StatusEffect")
+	int32 CurrentStacks = 1;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectDeactivatedSignature, class UStatusEffect*, StatusEffect);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksAddedSignature, UStatusEffect*, StatusEffect, int32, Amount);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksRemovedSignature, UStatusEffect*, StatusEffect, int32, Amount);
 /**
  * 
  */
@@ -80,11 +86,37 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStatusEffectDeactivatedSignature OnStatusEffectDeactivated;
 
-	void SetInstigator(AActor* Instigator);
+	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
+	FOnStacksAddedSignature OnStacksAdded;
+
+	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
+	FOnStacksRemovedSignature OnStacksRemoved;
+	
+	void StartEffect();
 	
 	void FinishEffect();
 
+	void SetInstigator(AActor* Instigator);
+
+	void SetTargetActor(AActor* TargetActor);
+	
 	bool GetIsUnique() const;
+
+	AActor* GetInstigator() const;
+
+	EStatusEffectType GetEffectType() const;
+
+	float GetRemainingTime() const;
+
+	bool IsStackable() const;
+
+	int32 GetMaxStacks() const;
+
+	int32 GetCurrentStacks() const;
+
+	bool AddStacks(int32 Amount = 1);
+
+	bool RemoveStacks(int32 Amount = 1);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="StatusEffect")
