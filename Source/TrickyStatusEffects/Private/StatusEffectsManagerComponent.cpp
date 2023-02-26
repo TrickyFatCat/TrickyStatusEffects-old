@@ -28,11 +28,12 @@ void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
 }
 #endif
 
-void UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator)
+UStatusEffect* UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> EffectClass,
+                                                         AActor* Instigator)
 {
 	if (!EffectClass)
 	{
-		return;
+		return nullptr;
 	}
 
 	UStatusEffect* Effect = EffectClass.GetDefaultObject();
@@ -56,10 +57,10 @@ void UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> 
 	{
 		Effect->AddStacks(1);
 		Effect->ReStartEffect();
-		return;
+		return Effect;
 	}
 
-	CreateEffect(EffectClass, Instigator);
+	return CreateEffect(EffectClass, Instigator);
 }
 
 bool UStatusEffectsManagerComponent::RemoveAllEffects()
@@ -317,18 +318,19 @@ void UStatusEffectsManagerComponent::PrintDebugData(const float DeltaTime)
 }
 #endif
 
-void UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator)
+UStatusEffect* UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<UStatusEffect> EffectClass,
+                                                            AActor* Instigator)
 {
 	if (!EffectClass)
 	{
-		return;
+		return nullptr;
 	}
 
 	UStatusEffect* NewEffect = NewObject<UStatusEffect>(this, EffectClass);
 
 	if (!NewEffect)
 	{
-		return;
+		return nullptr;
 	}
 
 	NewEffect->SetInstigator(Instigator);
@@ -337,6 +339,8 @@ void UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<UStatusEffec
 	ActiveEffects.Emplace(NewEffect);
 	NewEffect->StartEffect();
 	OnStatusEffectAdded.Broadcast(NewEffect, GetOwner(), Instigator);
+
+	return NewEffect;
 }
 
 int32 UStatusEffectsManagerComponent::GetNumberOfEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass) const

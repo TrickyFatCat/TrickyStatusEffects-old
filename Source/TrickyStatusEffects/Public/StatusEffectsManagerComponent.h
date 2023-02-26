@@ -26,7 +26,7 @@ public:
 	FOnStatusEffectAddedSignature OnStatusEffectAdded;
 	
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	void AddEffect(TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
+	UStatusEffect* AddEffect(TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveAllEffects();
@@ -71,7 +71,7 @@ private:
 	void PrintDebugData(const float DeltaTime);
 #endif
 	
-	void CreateEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
+	UStatusEffect* CreateEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
 
 	int32 GetNumberOfEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass) const;
 
