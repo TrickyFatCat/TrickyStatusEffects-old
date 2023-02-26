@@ -55,9 +55,18 @@ protected:
 	void HandleEffectDeactivation(UStatusEffect* StatusEffect);
 
 private:
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, Category="StatusEffectsManager", AdvancedDisplay)
+	bool bDebugEnabled = false;
+	
+	void PrintDebugData(const float DeltaTime);
+#endif
+	
 	void CreateEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
 
 	int32 GetNumberOfEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass) const;
 
 	int32 GetNumberOfEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
+
+	
 };

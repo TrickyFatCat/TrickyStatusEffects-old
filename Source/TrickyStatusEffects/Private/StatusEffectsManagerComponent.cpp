@@ -21,41 +21,9 @@ void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
                                                    ELevelTick TickType,
                                                    FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if (ActiveEffects.Num() > 0 && GEngine)
+	if (bDebugEnabled)
 	{
-		for (int32 i = 0; i < ActiveEffects.Num(); ++i)
-		{
-			const UStatusEffect* Effect = ActiveEffects[i];
-			const float RemainingTime = FMath::RoundToInt(Effect->GetRemainingTime() * 100) / 100.f;
-			const FString InstigatorName = IsValid(Effect->GetInstigator())
-				                               ? Effect->GetInstigator()->GetName()
-				                               : "NONE";
-			FString Message = FString::Printf(
-				TEXT("| Effect: %s |\n| Instigator: %s |\n| Uniqueness: %s |\n| Time Remaining: %s |\n| Stacks: %d/%d|"),
-				*Effect->GetName(),
-				*InstigatorName,
-				*UEnum::GetDisplayValueAsText(Effect->GetUniqueness()).ToString(),
-				*FString::SanitizeFloat(RemainingTime, 2),
-				Effect->GetCurrentStacks(),
-				Effect->GetMaxStacks());
-
-			FColor Color;
-
-			switch (Effect->GetEffectType())
-			{
-			case EStatusEffectType::Positive:
-				Color = FColor::Emerald;
-				break;
-
-			case EStatusEffectType::Negative:
-				Color = FColor::Orange;
-				break;
-			}
-			
-			GEngine->AddOnScreenDebugMessage(i, DeltaTime, Color, Message, false);
-		}
+		PrintDebugData(DeltaTime);
 	}
 }
 #endif
@@ -296,6 +264,47 @@ void UStatusEffectsManagerComponent::HandleEffectDeactivation(UStatusEffect* Sta
 {
 	ActiveEffects.RemoveSingle(StatusEffect);
 }
+
+#if WITH_EDITORONLY_DATA
+void UStatusEffectsManagerComponent::PrintDebugData(const float DeltaTime)
+{
+	if (ActiveEffects.Num() > 0 && GEngine)
+	{
+		for (int32 i = 0; i < ActiveEffects.Num(); ++i)
+		{
+			const UStatusEffect* Effect = ActiveEffects[i];
+			const float RemainingTime = FMath::RoundToInt(Effect->GetRemainingTime() * 100) / 100.f;
+			const FString InstigatorName = IsValid(Effect->GetInstigator())
+				                               ? Effect->GetInstigator()->GetName()
+				                               : "NONE";
+			FString Message = FString::Printf(
+				TEXT(
+					"| Effect: %s |\n| Instigator: %s |\n| Uniqueness: %s |\n| Time Remaining: %s |\n| Stacks: %d/%d|"),
+				*Effect->GetName(),
+				*InstigatorName,
+				*UEnum::GetDisplayValueAsText(Effect->GetUniqueness()).ToString(),
+				*FString::SanitizeFloat(RemainingTime, 2),
+				Effect->GetCurrentStacks(),
+				Effect->GetMaxStacks());
+
+			FColor Color;
+
+			switch (Effect->GetEffectType())
+			{
+			case EStatusEffectType::Positive:
+				Color = FColor::Emerald;
+				break;
+
+			case EStatusEffectType::Negative:
+				Color = FColor::Orange;
+				break;
+			}
+
+			GEngine->AddOnScreenDebugMessage(i, DeltaTime, Color, Message, true, FVector2D{1.25f, 1.25f});
+		}
+	}
+}
+#endif
 
 void UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator)
 {
