@@ -48,12 +48,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveEffectByObject(UStatusEffect* StatusEffect, const bool bIgnoreStacks = true);
 
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool HasEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
 
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	UStatusEffect* GetEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
 
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool HasEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
 
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	UStatusEffect* GetEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
 
 protected:
@@ -76,6 +80,4 @@ private:
 	int32 GetNumberOfEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass) const;
 
 	int32 GetNumberOfEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
-
-	
 };
