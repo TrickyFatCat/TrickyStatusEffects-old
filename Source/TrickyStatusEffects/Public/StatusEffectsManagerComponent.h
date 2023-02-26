@@ -20,7 +20,19 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	void AddEffect(TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
+	
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
+	
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool RemoveAllEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass);
+	
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool RemoveEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
 
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool RemoveAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
+	
 	bool HasEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
 
 	UStatusEffect* GetEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);

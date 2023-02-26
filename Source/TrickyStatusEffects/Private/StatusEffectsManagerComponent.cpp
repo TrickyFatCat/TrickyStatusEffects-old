@@ -61,11 +61,11 @@ void UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> 
 	{
 	case EStatusEffectUniqueness::Normal:
 		break;
-		
+
 	case EStatusEffectUniqueness::PerInstigator:
 		Effect = GetEffectOfClassByInstigator(EffectClass, Instigator);
 		break;
-		
+
 	case EStatusEffectUniqueness::PerTarget:
 		Effect = GetEffectOfClass(EffectClass);
 		break;
@@ -79,6 +79,90 @@ void UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> 
 	}
 
 	CreateEffect(EffectClass, Instigator);
+}
+
+bool UStatusEffectsManagerComponent::RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass)
+{
+	if (!EffectClass)
+	{
+		return false;
+	}
+
+	UStatusEffect* Effect = GetEffectOfClass(EffectClass)
+
+	if (!IsValid(Effect))
+	{
+		return false;
+	}
+
+	Effect->FinishEffect();
+	return true;
+}
+
+bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass)
+{
+	bool bSuccess = false;
+	
+	if (!EffectClass || !HasEffectOfClass(EffectClass))
+	{
+		return bSuccess;
+	}
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect) || Effect->GetClass() != EffectClass)
+		{
+			continue;
+		}
+
+		Effect->FinishEffect();
+		bSuccess = true;
+	}
+
+	return bSuccess;
+}
+
+bool UStatusEffectsManagerComponent::RemoveEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
+                                                                    AActor* Instigator)
+{
+	if (!EffectClass || !IsValid(Instigator))
+	{
+		return false;
+	}
+
+	UStatusEffect* Effect = GetEffectOfClassByInstigator(EffectClass, Instigator);
+
+	if (!IsValid(Effect))
+	{
+		return false;
+	}
+
+	Effect->FinishEffect();
+	return true;
+}
+
+bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
+                                                                         AActor* Instigator)
+{
+	bool bSuccess = false;
+
+	if (!EffectClass || !IsValid(Instigator) || !HasEffectOfClassByInstigator(EffectClass, Instigator))
+	{
+		return bSuccess;
+	}
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (Effect->GetClass() != EffectClass || Effect->GetInstigator() != Instigator)
+		{
+			continue;
+		}
+
+		Effect->FinishEffect();
+		bSuccess = true;
+	}
+
+	return bSuccess;
 }
 
 bool UStatusEffectsManagerComponent::HasEffectOfClass(const TSubclassOf<UStatusEffect> EffectClass)
