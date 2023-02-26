@@ -23,10 +23,10 @@ void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
 		{
 			const UStatusEffect* Effect = ActiveEffects[i];
 			FString Message = FString::Printf(
-				TEXT("%s | %hhd | %f | %d/%d"),
+				TEXT("%s | %s | %s | %d/%d"),
 				*Effect->GetName(),
-				Effect->GetEffectType(),
-				Effect->GetRemainingTime(),
+				*UEnum::GetDisplayValueAsText(Effect->GetUniqueness()).ToString(),
+				*FString::SanitizeFloat(Effect->GetRemainingTime(), 3),
 				Effect->GetCurrentStacks(),
 				Effect->GetMaxStacks());
 
@@ -55,16 +55,25 @@ void UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> 
 	}
 
 	UStatusEffect* Effect = EffectClass.GetDefaultObject();
+	const EStatusEffectUniqueness EffectUniqueness = Effect->GetUniqueness();
 
-	if (Effect->GetUniqueness() == EStatusEffectUniqueness::PerTarget && HasEffectOfClass(EffectClass))
+	switch (EffectUniqueness)
 	{
-		Effect = GetEffectOfClass(EffectClass);
+	case EStatusEffectUniqueness::Normal:
+		break;
 		
-		if (Effect->IsStackable())
-		{
-			Effect->AddStacks(1);
-		}
+	case EStatusEffectUniqueness::PerInstigator:
+		Effect = GetEffectOfClassByInstigator(EffectClass, Instigator);
+		break;
+		
+	case EStatusEffectUniqueness::PerTarget:
+		Effect = GetEffectOfClass(EffectClass);
+		break;
+	}
 
+	if (IsValid(Effect) && EffectUniqueness != EStatusEffectUniqueness::Normal)
+	{
+		Effect->AddStacks(1);
 		Effect->ReActivateEffect();
 		return;
 	}
@@ -106,6 +115,43 @@ UStatusEffect* UStatusEffectsManagerComponent::GetEffectOfClass(TSubclassOf<USta
 	return StatusEffect;
 }
 
+bool UStatusEffectsManagerComponent::HasEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
+                                                                  const AActor* Instigator)
+{
+	if (!EffectClass || !IsValid(Instigator))
+	{
+		return false;
+	}
+
+	return IsValid(GetEffectOfClassByInstigator(EffectClass, Instigator));
+}
+
+UStatusEffect* UStatusEffectsManagerComponent::GetEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
+                                                                            const AActor* Instigator)
+{
+	UStatusEffect* StatusEffect = nullptr;
+
+	if (!EffectClass || !IsValid(Instigator))
+	{
+		return StatusEffect;
+	}
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect))
+		{
+			continue;
+		}
+		if (EffectClass == Effect->GetClass() && Effect->GetInstigator() == Instigator)
+		{
+			StatusEffect = Effect;
+			break;
+		}
+	}
+
+	return StatusEffect;
+}
+
 void UStatusEffectsManagerComponent::HandleEffectDeactivation(UStatusEffect* StatusEffect)
 {
 	ActiveEffects.RemoveSingle(StatusEffect);
@@ -117,7 +163,7 @@ void UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<UStatusEffec
 	{
 		return;
 	}
-	
+
 	UStatusEffect* NewEffect = NewObject<UStatusEffect>(this, EffectClass);
 
 	if (!NewEffect)
@@ -125,11 +171,7 @@ void UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<UStatusEffec
 		return;
 	}
 
-	if (NewEffect->GetUniqueness() != EStatusEffectUniqueness::PerTarget)
-	{
-		NewEffect->SetInstigator(Instigator);
-	}
-
+	NewEffect->SetInstigator(Instigator);
 	NewEffect->SetTargetActor(GetOwner());
 	NewEffect->OnStatusEffectDeactivated.AddDynamic(this, &UStatusEffectsManagerComponent::HandleEffectDeactivation);
 	ActiveEffects.Emplace(NewEffect);

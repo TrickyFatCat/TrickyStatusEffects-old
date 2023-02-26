@@ -25,6 +25,10 @@ public:
 
 	UStatusEffect* GetEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
 
+	bool HasEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
+
+	UStatusEffect* GetEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StatusEffectsManager")
 	TArray<UStatusEffect*> ActiveEffects;
