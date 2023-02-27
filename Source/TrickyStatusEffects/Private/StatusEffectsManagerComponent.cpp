@@ -87,6 +87,52 @@ bool UStatusEffectsManagerComponent::RemoveAllEffects(const bool bCustomReason)
 	return true;
 }
 
+bool UStatusEffectsManagerComponent::RemoveAllPositiveEffects(const bool bCustomReason)
+{
+	if (ActiveEffects.Num() == 0)
+	{
+		return false;
+	}
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect) || Effect->GetEffectType() != EStatusEffectType::Positive)
+		{
+			continue;
+		}
+
+		Effect->OnStatusEffectDeactivated.Clear();
+		FinishEffect(Effect, bCustomReason);
+	}
+
+	ActiveEffects.Empty();
+
+	return true;
+}
+
+bool UStatusEffectsManagerComponent::RemoveAllNegativeEffects(const bool bCustomReason)
+{
+	if (ActiveEffects.Num() == 0)
+	{
+		return false;
+	}
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect) || Effect->GetEffectType() != EStatusEffectType::Negative)
+		{
+			continue;
+		}
+
+		Effect->OnStatusEffectDeactivated.Clear();
+		FinishEffect(Effect, bCustomReason);
+	}
+
+	ActiveEffects.Empty();
+
+	return true;
+}
+
 bool UStatusEffectsManagerComponent::RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass,
                                                          const bool bCustomReason,
                                                          const bool bRemoveAllStacks,

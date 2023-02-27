@@ -35,6 +35,12 @@ public:
 	bool RemoveAllEffects(const bool bCustomReason = false);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool RemoveAllPositiveEffects(const bool bCustomReason = false);
+
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool RemoveAllNegativeEffects(const bool bCustomReason = false);
+
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass,
 	                         const bool bCustomReason = false,
 	                         const bool bRemoveAllStacks = true,
