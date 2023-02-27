@@ -17,7 +17,7 @@ enum class EStatusEffectType : uint8
 };
 
 UENUM(BlueprintType)
-enum class ERestartBehavior : uint8
+enum class EReactivationBehavior : uint8
 {
 	Custom,
 	Reset,
@@ -68,7 +68,7 @@ struct FStatusEffectData
 	FTimerHandle DurationTimerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bInfiniteDuration"))
-	ERestartBehavior ReStartBehavior = ERestartBehavior::Reset;
+	EReactivationBehavior ReStartBehavior = EReactivationBehavior::Reset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	bool bIsStackable = false;
@@ -135,7 +135,7 @@ public:
 
 	float GetRemainingTime() const;
 
-	ERestartBehavior GetRestartBehavior() const { return StatusEffectData.ReStartBehavior; }
+	EReactivationBehavior GetRestartBehavior() const { return StatusEffectData.ReStartBehavior; }
 
 	bool IsStackable() const { return StatusEffectData.bIsStackable; }
 
@@ -164,9 +164,9 @@ protected:
 	virtual void DeactivateEffect_Implementation(const EDeactivationReason Reason);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
-	void ReActivateEffect();
+	void ReactivateEffect(const EReactivationBehavior ReactivationBehavior);
 
-	virtual void ReActivateEffect_Implementation();
+	virtual void ReactivateEffect_Implementation(const EReactivationBehavior ReactivationBehavior);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
 	void StacksIncreased(const int32 Amount);

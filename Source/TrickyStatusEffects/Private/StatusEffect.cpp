@@ -58,8 +58,6 @@ void UStatusEffect::ReStartEffect()
 {
 	const UWorld* World = GetWorld();
 
-	ReActivateEffect();
-
 	if (!World)
 	{
 		return;
@@ -69,10 +67,10 @@ void UStatusEffect::ReStartEffect()
 
 	switch (StatusEffectData.ReStartBehavior)
 	{
-	case ERestartBehavior::Custom:
+	case EReactivationBehavior::Custom:
 		break;
 
-	case ERestartBehavior::Add:
+	case EReactivationBehavior::Add:
 		if (TimerManager.IsTimerActive(StatusEffectData.DurationTimerHandle))
 		{
 			const float DeltaDuration = GetRemainingTime();
@@ -82,7 +80,7 @@ void UStatusEffect::ReStartEffect()
 		}
 		break;
 
-	case ERestartBehavior::Reset:
+	case EReactivationBehavior::Reset:
 		if (TimerManager.IsTimerActive(StatusEffectData.DurationTimerHandle))
 		{
 			TimerManager.ClearTimer(StatusEffectData.DurationTimerHandle);
@@ -90,6 +88,8 @@ void UStatusEffect::ReStartEffect()
 		}
 		break;
 	}
+	
+	ReactivateEffect(StatusEffectData.ReStartBehavior);
 }
 
 float UStatusEffect::GetRemainingTime() const
@@ -161,12 +161,12 @@ void UStatusEffect::DeactivateEffect_Implementation(const EDeactivationReason Re
 {
 }
 
-void UStatusEffect::ReActivateEffect_Implementation()
+void UStatusEffect::ReactivateEffect_Implementation(const EReactivationBehavior ReactivationBehavior)
 {
 }
 
 void UStatusEffect::StacksIncreased_Implementation(const int32 Amount)
-{
+{ 
 }
 
 void UStatusEffect::StacksDecreased_Implementation(const int32 Amount)
