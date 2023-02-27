@@ -254,9 +254,15 @@ bool UStatusEffectsManagerComponent::RemoveEffectByObject(UStatusEffect* StatusE
 	return FinishEffect(StatusEffect, bCustomReason, bRemoveAllStacks, StacksAmount);
 }
 
-void UStatusEffectsManagerComponent::GetAllActiveEffects(TArray<UStatusEffect*>& ActiveEffects) const
+bool UStatusEffectsManagerComponent::GetAllActiveEffects(TArray<UStatusEffect*>& Effects) const
 {
-	ActiveEffects = this->ActiveEffects;
+	if (ActiveEffects.Num() == 0)
+	{
+		return false;
+	}
+	
+	Effects = ActiveEffects;
+	return true;
 }
 
 bool UStatusEffectsManagerComponent::GetAllPositiveEffects(TArray<UStatusEffect*>& PositiveEffects) const

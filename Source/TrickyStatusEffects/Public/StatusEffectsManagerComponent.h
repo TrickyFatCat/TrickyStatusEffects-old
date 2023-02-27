@@ -70,7 +70,7 @@ public:
 	                          const int32 StacksAmount = 1);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	void GetAllActiveEffects(TArray<UStatusEffect*>& ActiveEffects) const;
+	bool GetAllActiveEffects(TArray<UStatusEffect*>& ActiveEffects) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool GetAllPositiveEffects(TArray<UStatusEffect*>& PositiveEffects) const;

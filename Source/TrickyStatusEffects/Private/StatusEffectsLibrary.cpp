@@ -206,15 +206,14 @@ bool UStatusEffectsLibrary::GetAllActiveStatusEffects(AActor* TargetActor, TArra
 		return false;
 	}
 
-	UStatusEffectsManagerComponent* StatusEffectsManagerComponent = GetStatusEffectsManager(TargetActor);
+	const UStatusEffectsManagerComponent* StatusEffectsManagerComponent = GetStatusEffectsManager(TargetActor);
 
 	if (!StatusEffectsManagerComponent)
 	{
 		return false;
 	}
 
-	StatusEffectsManagerComponent->GetAllActiveEffects(ActiveEffects);
-	return true;
+	return StatusEffectsManagerComponent->GetAllActiveEffects(ActiveEffects);
 }
 
 bool UStatusEffectsLibrary::GetAllPositiveStatusEffects(AActor* TargetActor,
@@ -225,7 +224,7 @@ bool UStatusEffectsLibrary::GetAllPositiveStatusEffects(AActor* TargetActor,
 		return false;
 	}
 
-	UStatusEffectsManagerComponent* StatusEffectsManagerComponent = GetStatusEffectsManager(TargetActor);
+	const UStatusEffectsManagerComponent* StatusEffectsManagerComponent = GetStatusEffectsManager(TargetActor);
 
 	if (!StatusEffectsManagerComponent)
 	{
@@ -243,7 +242,7 @@ bool UStatusEffectsLibrary::GetAllNegativeStatusEffects(AActor* TargetActor,
 		return false;
 	}
 
-	UStatusEffectsManagerComponent* StatusEffectsManagerComponent = GetStatusEffectsManager(TargetActor);
+	const UStatusEffectsManagerComponent* StatusEffectsManagerComponent = GetStatusEffectsManager(TargetActor);
 
 	if (!StatusEffectsManagerComponent)
 	{
