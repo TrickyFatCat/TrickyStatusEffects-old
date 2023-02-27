@@ -63,11 +63,15 @@ struct FStatusEffectData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	bool bIsStackable = false;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="bIsStackable", ClampMin=1))
 	int32 MaxStacks = 1;
 
-	UPROPERTY(VisibleAnywhere, Category="StatusEffect")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect",
+		meta=(EditCondition="bIsStackable", ClampMin="1"))
+	int32 InitialStacks = 1;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	int32 CurrentStacks = 1;
 };
 
@@ -89,6 +93,7 @@ public:
 	UStatusEffect();
 
 protected:
+	virtual void PostInitProperties() override;
 	virtual void BeginDestroy() override;
 
 public:
@@ -104,19 +109,19 @@ public:
 	void StartEffect();
 
 	void FinishEffect();
-	
+
 	void ReStartEffect();
-	
+
 	AActor* GetInstigator() const { return StatusEffectData.Instigator; }
 
 	void SetInstigator(AActor* Instigator) { StatusEffectData.Instigator = Instigator; }
 
 	AActor* GetTargetActor() const { return StatusEffectData.TargetActor; }
-	
+
 	void SetTargetActor(AActor* TargetActor) { StatusEffectData.TargetActor = TargetActor; }
 
 	EStatusEffectType GetEffectType() const { return StatusEffectData.EffectType; }
-	
+
 	EStatusEffectUniqueness GetUniqueness() const { return StatusEffectData.EffectUniqueness; }
 
 	float GetRemainingTime() const;
@@ -134,7 +139,7 @@ public:
 	bool RemoveStacks(int32 Amount = 1);
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="StatusEffect")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	FStatusEffectData StatusEffectData;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
@@ -146,17 +151,17 @@ protected:
 	void DeactivateEffect();
 
 	virtual void DeactivateEffect_Implementation();
-	
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
 	void ReActivateEffect();
-	
+
 	virtual void ReActivateEffect_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
 	void StacksIncreased(const int32 Amount);
 
 	virtual void StacksIncreased_Implementation(const int32 Amount);
-	
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
 	void StacksDecreased(const int32 Amount);
 

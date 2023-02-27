@@ -7,6 +7,13 @@ UStatusEffect::UStatusEffect()
 {
 }
 
+void UStatusEffect::PostInitProperties()
+{
+	UObject::PostInitProperties();
+	
+	StatusEffectData.CurrentStacks = FMath::Clamp(StatusEffectData.InitialStacks, 1, StatusEffectData.MaxStacks);
+}
+
 void UStatusEffect::BeginDestroy()
 {
 	UObject::BeginDestroy();
