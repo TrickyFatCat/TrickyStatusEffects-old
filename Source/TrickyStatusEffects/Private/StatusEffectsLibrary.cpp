@@ -217,7 +217,7 @@ bool UStatusEffectsLibrary::GetAllActiveStatusEffects(AActor* TargetActor, TArra
 }
 
 bool UStatusEffectsLibrary::GetAllPositiveStatusEffects(AActor* TargetActor,
-                                                        TArray<UStatusEffect*>& PositiveEffects) const
+                                                        TArray<UStatusEffect*>& PositiveEffects)
 {
 	if (!IsValid(TargetActor))
 	{
@@ -235,7 +235,7 @@ bool UStatusEffectsLibrary::GetAllPositiveStatusEffects(AActor* TargetActor,
 }
 
 bool UStatusEffectsLibrary::GetAllNegativeStatusEffects(AActor* TargetActor,
-                                                        TArray<UStatusEffect*>& NegativeEffects) const
+                                                        TArray<UStatusEffect*>& NegativeEffects)
 {
 	if (!IsValid(TargetActor))
 	{

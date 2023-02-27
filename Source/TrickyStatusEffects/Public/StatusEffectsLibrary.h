@@ -73,10 +73,10 @@ class TRICKYSTATUSEFFECTS_API UStatusEffectsLibrary : public UBlueprintFunctionL
 	static bool GetAllActiveStatusEffects(AActor* TargetActor, TArray<UStatusEffect*>& ActiveEffects);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	static bool GetAllPositiveStatusEffects(AActor* TargetActor, TArray<UStatusEffect*>& PositiveEffects) const;
+	static bool GetAllPositiveStatusEffects(AActor* TargetActor, TArray<UStatusEffect*>& PositiveEffects);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	static bool GetAllNegativeStatusEffects(AActor* TargetActor, TArray<UStatusEffect*>& NegativeEffects) const;
+	static bool GetAllNegativeStatusEffects(AActor* TargetActor, TArray<UStatusEffect*>& NegativeEffects);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	static bool HasStatusEffectOfClass(AActor* TargetActor, TSubclassOf<UStatusEffect> EffectClass);
