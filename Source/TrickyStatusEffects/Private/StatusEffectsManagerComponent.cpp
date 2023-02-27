@@ -254,6 +254,59 @@ bool UStatusEffectsManagerComponent::RemoveEffectByObject(UStatusEffect* StatusE
 	return FinishEffect(StatusEffect, bCustomReason, bRemoveAllStacks, StacksAmount);
 }
 
+void UStatusEffectsManagerComponent::GetAllActiveEffects(TArray<UStatusEffect*>& ActiveEffects) const
+{
+	ActiveEffects = this->ActiveEffects;
+}
+
+bool UStatusEffectsManagerComponent::GetAllPositiveEffects(TArray<UStatusEffect*>& PositiveEffects) const
+{
+	if (ActiveEffects.Num() == 0)
+	{
+		return false;
+	}
+
+	PositiveEffects.Empty();
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect) || Effect->GetEffectType() != EStatusEffectType::Positive)
+		{
+			continue;
+		}
+
+		PositiveEffects.Emplace(Effect);
+	}
+
+	return PositiveEffects.Num() > 0;
+}
+
+bool UStatusEffectsManagerComponent::GetAllNegativeEffects(TArray<UStatusEffect*>& NegativeEffects) const
+{
+	if (ActiveEffects.Num() == 0)
+	{
+		return false;
+	}
+	if (ActiveEffects.Num() == 0)
+	{
+		return false;
+	}
+
+	NegativeEffects.Empty();
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect) || Effect->GetEffectType() != EStatusEffectType::Negative)
+		{
+			continue;
+		}
+
+		NegativeEffects.Emplace(Effect);
+	}
+
+	return NegativeEffects.Num() > 0;
+}
+
 bool UStatusEffectsManagerComponent::HasEffectOfClass(const TSubclassOf<UStatusEffect> EffectClass)
 {
 	if (!EffectClass || ActiveEffects.Num() == 0)
@@ -286,6 +339,29 @@ UStatusEffect* UStatusEffectsManagerComponent::GetEffectOfClass(TSubclassOf<USta
 		}
 	}
 	return StatusEffect;
+}
+
+bool UStatusEffectsManagerComponent::GetAllEffectsOfClass(const TSubclassOf<UStatusEffect> EffectClass,
+                                                          TArray<UStatusEffect*>& Effects)
+{
+	if (!EffectClass || ActiveEffects.Num() == 0 || !HasEffectOfClass(EffectClass))
+	{
+		return false;
+	}
+
+	Effects.Empty();
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect) || Effect->GetClass() != EffectClass)
+		{
+			continue;
+		}
+
+		Effects.Emplace(Effect);
+	}
+
+	return Effects.Num() > 0;
 }
 
 bool UStatusEffectsManagerComponent::HasEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
@@ -323,6 +399,30 @@ UStatusEffect* UStatusEffectsManagerComponent::GetEffectOfClassByInstigator(TSub
 	}
 
 	return StatusEffect;
+}
+
+bool UStatusEffectsManagerComponent::GetAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
+                                                                      const AActor* Instigator,
+                                                                      TArray<UStatusEffect*>& Effects)
+{
+	if (!EffectClass || ActiveEffects.Num() == 0 || !HasEffectOfClassByInstigator(EffectClass, Instigator))
+	{
+		return false;
+	}
+
+	Effects.Empty();
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect) || Effect->GetClass() != EffectClass || Effect->GetInstigator() != Instigator)
+		{
+			continue;
+		}
+
+		Effects.Emplace(Effect);
+	}
+
+	return Effects.Num() > 0;
 }
 
 void UStatusEffectsManagerComponent::HandleEffectDeactivation(UStatusEffect* StatusEffect)
@@ -407,7 +507,7 @@ bool UStatusEffectsManagerComponent::FinishEffect(UStatusEffect* Effect,
 		Effect->FinishEffect(bCustomReason ? EDeactivationReason::Custom : EDeactivationReason::Remove);
 		return true;
 	}
-	
+
 	return Effect->RemoveStacks(StacksAmount);
 }
 

@@ -27,7 +27,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="StatusEffectsManager")
 	FOnStatusEffectAddedSignature OnStatusEffectAdded;
-	
+
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	UStatusEffect* AddEffect(TSubclassOf<UStatusEffect> EffectClass,
 	                         AActor* Instigator,
@@ -70,16 +70,33 @@ public:
 	                          const int32 StacksAmount = 1);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	void GetAllActiveEffects(TArray<UStatusEffect*>& ActiveEffects) const;
+
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool GetAllPositiveEffects(TArray<UStatusEffect*>& PositiveEffects) const;
+
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool GetAllNegativeEffects(TArray<UStatusEffect*>& NegativeEffects) const;
+
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool HasEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	UStatusEffect* GetEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool GetAllEffectsOfClass(const TSubclassOf<UStatusEffect> EffectClass, TArray<UStatusEffect*>& Effects);
+
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool HasEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	UStatusEffect* GetEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
+
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool GetAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
+	                                      const AActor* Instigator,
+	                                      TArray<UStatusEffect*>& Effects);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StatusEffectsManager")
