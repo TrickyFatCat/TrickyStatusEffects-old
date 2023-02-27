@@ -4,6 +4,8 @@
 #include "StatusEffectsLibrary.h"
 
 #include "StatusEffectsManagerComponent.h"
+#include "GameFramework/Actor.h"
+
 
 UStatusEffectsManagerComponent* UStatusEffectsLibrary::GetStatusEffectsManager(AActor* TargetActor)
 {
@@ -15,7 +17,7 @@ UStatusEffectsManagerComponent* UStatusEffectsLibrary::GetStatusEffectsManager(A
 	return TargetActor->FindComponentByClass<UStatusEffectsManagerComponent>();
 }
 
-UStatusEffect* UStatusEffectsLibrary::AddStatusEffect(const TSubclassOf<UStatusEffect> EffectClass,
+UStatusEffect* UStatusEffectsLibrary::AddStatusEffect(TSubclassOf<UStatusEffect> EffectClass,
                                                       AActor* TargetActor,
                                                       AActor* Instigator,
                                                       const int32 StacksAmount)

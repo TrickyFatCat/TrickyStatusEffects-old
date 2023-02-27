@@ -4,6 +4,7 @@
 #include "StatusEffect.h"
 
 #include "StatusEffectsManagerComponent.h"
+#include "Engine/World.h"
 
 UStatusEffect::UStatusEffect()
 {

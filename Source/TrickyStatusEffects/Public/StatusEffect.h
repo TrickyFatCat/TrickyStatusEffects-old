@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "TimerManager.h"
 #include "StatusEffect.generated.h"
 
 struct FTimerHandle;

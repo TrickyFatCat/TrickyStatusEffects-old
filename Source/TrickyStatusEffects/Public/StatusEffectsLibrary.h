@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "StatusEffect.h"
 #include "StatusEffectsLibrary.generated.h"
 
-class UStatusEffect;
+// class UStatusEffect;
 class UStatusEffectsManagerComponent;
 class AActor;
 
@@ -91,7 +92,7 @@ class TRICKYSTATUSEFFECTS_API UStatusEffectsLibrary : public UBlueprintFunctionL
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	bool GetAllStatusEffectsOfClass(AActor* TargetActor,
-	                                const TSubclassOf<UStatusEffect> EffectClass,
+	                                TSubclassOf<UStatusEffect> EffectClass,
 	                                TArray<UStatusEffect*>& Effects);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
