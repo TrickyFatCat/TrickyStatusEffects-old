@@ -29,7 +29,8 @@ void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
 #endif
 
 UStatusEffect* UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> EffectClass,
-                                                         AActor* Instigator)
+                                                         AActor* Instigator,
+                                                         const int32 StacksAmount)
 {
 	if (!EffectClass)
 	{
@@ -55,7 +56,7 @@ UStatusEffect* UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStat
 
 	if (IsValid(Effect) && EffectUniqueness != EStatusEffectUniqueness::Normal)
 	{
-		Effect->AddStacks(1);
+		Effect->AddStacks(StacksAmount);
 		Effect->ReStartEffect();
 		return Effect;
 	}

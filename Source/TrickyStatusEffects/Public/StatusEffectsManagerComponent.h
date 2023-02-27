@@ -27,7 +27,9 @@ public:
 	FOnStatusEffectAddedSignature OnStatusEffectAdded;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	UStatusEffect* AddEffect(TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
+	UStatusEffect* AddEffect(TSubclassOf<UStatusEffect> EffectClass,
+	                         AActor* Instigator,
+	                         const int32 StacksAmount);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveAllEffects(const bool bCustomReason = false);
