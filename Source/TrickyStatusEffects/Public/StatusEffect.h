@@ -86,6 +86,8 @@ struct FStatusEffectData
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectDeactivatedSignature, class UStatusEffect*, StatusEffect);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectReactivatedSignature, class UStatusEffect*, StatusEffect);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksAddedSignature, UStatusEffect*, StatusEffect, int32, Amount);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksRemovedSignature, UStatusEffect*, StatusEffect, int32, Amount);
@@ -110,6 +112,9 @@ public:
 	FOnStatusEffectDeactivatedSignature OnStatusEffectDeactivated;
 
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
+	FOnStatusEffectReactivatedSignature OnStatusEffectReactivated;
+	
+	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStacksAddedSignature OnStacksAdded;
 
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
@@ -121,26 +126,35 @@ public:
 
 	void ReStartEffect();
 
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	AActor* GetInstigator() const { return StatusEffectData.Instigator; }
 
 	void SetInstigator(AActor* Instigator) { StatusEffectData.Instigator = Instigator; }
 
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	AActor* GetTargetActor() const { return StatusEffectData.TargetActor; }
 
 	void SetTargetActor(AActor* TargetActor) { StatusEffectData.TargetActor = TargetActor; }
 
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	EStatusEffectType GetEffectType() const { return StatusEffectData.EffectType; }
 
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	EStatusEffectUniqueness GetUniqueness() const { return StatusEffectData.EffectUniqueness; }
 
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	float GetRemainingTime() const;
 
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	EReactivationBehavior GetRestartBehavior() const { return StatusEffectData.ReStartBehavior; }
 
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	bool IsStackable() const { return StatusEffectData.bIsStackable; }
 
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	int32 GetMaxStacks() const { return StatusEffectData.MaxStacks; }
 
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	int32 GetCurrentStacks() const { return StatusEffectData.CurrentStacks; }
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffect")

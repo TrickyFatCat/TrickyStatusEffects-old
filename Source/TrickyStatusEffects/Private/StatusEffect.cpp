@@ -90,6 +90,7 @@ void UStatusEffect::ReStartEffect()
 	}
 	
 	ReactivateEffect(StatusEffectData.ReStartBehavior);
+	OnStatusEffectReactivated.Broadcast(this);
 }
 
 float UStatusEffect::GetRemainingTime() const
