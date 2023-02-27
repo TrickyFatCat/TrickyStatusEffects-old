@@ -11,7 +11,10 @@ void UStatusEffect::PostInitProperties()
 {
 	UObject::PostInitProperties();
 
-	StatusEffectData.CurrentStacks = FMath::Clamp(StatusEffectData.InitialStacks, 1, StatusEffectData.MaxStacks);
+	if (IsStackable())
+	{
+		StatusEffectData.CurrentStacks = FMath::Clamp(StatusEffectData.InitialStacks, 1, StatusEffectData.MaxStacks);
+	}
 }
 
 void UStatusEffect::BeginDestroy()
