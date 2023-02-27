@@ -87,8 +87,9 @@ bool UStatusEffectsManagerComponent::RemoveAllEffects(const bool bCustomReason)
 }
 
 bool UStatusEffectsManagerComponent::RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass,
-                                                         const bool bIgnoreStacks,
-                                                         const bool bCustomReason)
+                                                         const bool bCustomReason,
+                                                         const bool bRemoveAllStacks,
+                                                         const int32 StacksAmount)
 {
 	if (!EffectClass)
 	{
@@ -102,8 +103,7 @@ bool UStatusEffectsManagerComponent::RemoveEffectOfClass(TSubclassOf<UStatusEffe
 		return false;
 	}
 
-	bIgnoreStacks ? FinishEffect(Effect, bCustomReason) : Effect->RemoveStacks();
-	return true;
+	return FinishEffect(Effect, bCustomReason, bRemoveAllStacks, StacksAmount);
 }
 
 bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass,
@@ -141,8 +141,9 @@ bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClass(TSubclassOf<UStatus
 
 bool UStatusEffectsManagerComponent::RemoveEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
                                                                      const AActor* Instigator,
-                                                                     const bool bIgnoreStacks,
-                                                                     const bool bCustomReason)
+                                                                     const bool bCustomReason,
+                                                                     const bool bRemoveAllStacks,
+                                                                     const int StacksAmount)
 {
 	if (!EffectClass || ActiveEffects.Num() == 0)
 	{
@@ -156,8 +157,7 @@ bool UStatusEffectsManagerComponent::RemoveEffectOfClassByInstigator(TSubclassOf
 		return false;
 	}
 
-	bIgnoreStacks ? FinishEffect(Effect, bCustomReason) : Effect->RemoveStacks();
-	return true;
+	return FinishEffect(Effect, bCustomReason, bRemoveAllStacks, StacksAmount);
 }
 
 bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
@@ -195,16 +195,16 @@ bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClassByInstigator(TSubcla
 }
 
 bool UStatusEffectsManagerComponent::RemoveEffectByObject(UStatusEffect* StatusEffect,
-	const bool bIgnoreStacks,
-	const bool bCustomReason)
+                                                          const bool bCustomReason,
+                                                          const bool bRemoveAllStacks,
+                                                          const int32 StacksAmount)
 {
 	if (!IsValid(StatusEffect) || ActiveEffects.Num() == 0 || !ActiveEffects.Contains(StatusEffect))
 	{
 		return false;
 	}
 
-	bIgnoreStacks ? FinishEffect(StatusEffect, bCustomReason) : StatusEffect->RemoveStacks();
-	return true;
+	return FinishEffect(StatusEffect, bCustomReason, bRemoveAllStacks, StacksAmount);
 }
 
 bool UStatusEffectsManagerComponent::HasEffectOfClass(const TSubclassOf<UStatusEffect> EffectClass)
@@ -350,9 +350,18 @@ UStatusEffect* UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<US
 	return NewEffect;
 }
 
-void UStatusEffectsManagerComponent::FinishEffect(UStatusEffect* Effect, const bool bCustomReason)
+bool UStatusEffectsManagerComponent::FinishEffect(UStatusEffect* Effect,
+                                                  const bool bCustomReason,
+                                                  const bool bRemoveAllStacks,
+                                                  const int32 StacksAmount)
 {
-	Effect->FinishEffect(bCustomReason ? EDeactivationReason::Custom : EDeactivationReason::Remove);
+	if (bRemoveAllStacks)
+	{
+		Effect->FinishEffect(bCustomReason ? EDeactivationReason::Custom : EDeactivationReason::Remove);
+		return true;
+	}
+	
+	return Effect->RemoveStacks(StacksAmount);
 }
 
 int32 UStatusEffectsManagerComponent::GetNumberOfEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass) const

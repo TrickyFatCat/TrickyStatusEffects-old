@@ -34,8 +34,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass,
-	                         const bool bIgnoreStacks = true,
-	                         const bool bCustomReason = false);
+	                         const bool bCustomReason = false,
+	                         const bool bRemoveAllStacks = true,
+	                         const int32 StacksAmount = 1);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveAllEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass, const bool bCustomReason = false);
@@ -43,8 +44,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
 	                                     const AActor* Instigator,
-	                                     const bool bIgnoreStacks = true,
-	                                     const bool bCustomReason = false);
+	                                     const bool bCustomReason = false,
+	                                     const bool bRemoveAllStacks = true,
+	                                     const int32 StacksAmount = 1);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
@@ -53,8 +55,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveEffectByObject(UStatusEffect* StatusEffect,
-	                          const bool bIgnoreStacks = true,
-	                          const bool bCustomReason = false);
+	                          const bool bCustomReason = false,
+	                          const bool bRemoveAllStacks = true,
+	                          const int32 StacksAmount = 1);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool HasEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
@@ -85,7 +88,10 @@ private:
 
 	UStatusEffect* CreateEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
 
-	static void FinishEffect(UStatusEffect* Effect, const bool bCustomReason);
+	static bool FinishEffect(UStatusEffect* Effect,
+	                         const bool bCustomReason = false,
+	                         const bool bRemoveAllStacks = true,
+	                         const int32 StacksAmount = 1);
 
 	int32 GetNumberOfEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass) const;
 
