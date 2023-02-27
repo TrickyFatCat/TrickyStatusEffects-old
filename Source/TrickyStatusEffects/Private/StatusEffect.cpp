@@ -10,7 +10,7 @@ UStatusEffect::UStatusEffect()
 void UStatusEffect::PostInitProperties()
 {
 	UObject::PostInitProperties();
-	
+
 	StatusEffectData.CurrentStacks = FMath::Clamp(StatusEffectData.InitialStacks, 1, StatusEffectData.MaxStacks);
 }
 
@@ -37,19 +37,22 @@ void UStatusEffect::StartEffect()
 	{
 		if (!StatusEffectData.bInfiniteDuration)
 		{
-			World->GetTimerManager().SetTimer(StatusEffectData.DurationTimerHandle,
-			                                  this,
-			                                  &UStatusEffect::FinishEffect,
-			                                  StatusEffectData.Duration);
+			// FTimerDelegate TimerDelegate;
+			// TimerDelegate.BindUObject(this, &UStatusEffect::FinishEffect, EDeactivationReason::Time);
+			// World->GetTimerManager().SetTimer(StatusEffectData.DurationTimerHandle,
+			//                                   TimerDelegate,
+			//                                   StatusEffectData.Duration,
+			//                                   false);
+			StartTimer(World, StatusEffectData.Duration);
 		}
 
 		ActivateEffect();
 	}
 }
 
-void UStatusEffect::FinishEffect()
+void UStatusEffect::FinishEffect(const EDeactivationReason Reason)
 {
-	DeactivateEffect();
+	DeactivateEffect(Reason);
 	OnStatusEffectDeactivated.Broadcast(this);
 	this->ConditionalBeginDestroy();
 }
@@ -76,12 +79,13 @@ void UStatusEffect::ReStartEffect()
 		if (TimerManager.IsTimerActive(StatusEffectData.DurationTimerHandle))
 		{
 			const float DeltaDuration = GetRemainingTime();
-			
+
 			TimerManager.ClearTimer(StatusEffectData.DurationTimerHandle);
-			TimerManager.SetTimer(StatusEffectData.DurationTimerHandle,
-			                      this,
-			                      &UStatusEffect::FinishEffect,
-			                      StatusEffectData.Duration + DeltaDuration);
+			// TimerManager.SetTimer(StatusEffectData.DurationTimerHandle,
+			//                       this,
+			//                       &UStatusEffect::FinishEffect,
+			//                       StatusEffectData.Duration + DeltaDuration);
+			StartTimer(World, StatusEffectData.Duration + DeltaDuration);
 		}
 		break;
 
@@ -89,10 +93,11 @@ void UStatusEffect::ReStartEffect()
 		if (TimerManager.IsTimerActive(StatusEffectData.DurationTimerHandle))
 		{
 			TimerManager.ClearTimer(StatusEffectData.DurationTimerHandle);
-			TimerManager.SetTimer(StatusEffectData.DurationTimerHandle,
-			                      this,
-			                      &UStatusEffect::FinishEffect,
-			                      StatusEffectData.Duration);
+			// TimerManager.SetTimer(StatusEffectData.DurationTimerHandle,
+			                      // this,
+			                      // &UStatusEffect::FinishEffect,
+			                      // StatusEffectData.Duration);
+			StartTimer(World, StatusEffectData.Duration);
 		}
 		break;
 	}
@@ -153,7 +158,7 @@ bool UStatusEffect::RemoveStacks(int32 Amount)
 
 	if (StatusEffectData.CurrentStacks == 0)
 	{
-		FinishEffect();
+		FinishEffect(EDeactivationReason::Stacks);
 	}
 
 	return true;
@@ -163,7 +168,7 @@ void UStatusEffect::ActivateEffect_Implementation()
 {
 }
 
-void UStatusEffect::DeactivateEffect_Implementation()
+void UStatusEffect::DeactivateEffect_Implementation(const EDeactivationReason Reason)
 {
 }
 
@@ -177,4 +182,14 @@ void UStatusEffect::StacksIncreased_Implementation(const int32 Amount)
 
 void UStatusEffect::StacksDecreased_Implementation(const int32 Amount)
 {
+}
+
+void UStatusEffect::StartTimer(const UWorld* World, const float Duration)
+{
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindUObject(this, &UStatusEffect::FinishEffect, EDeactivationReason::Time);
+	World->GetTimerManager().SetTimer(StatusEffectData.DurationTimerHandle,
+	                                  TimerDelegate,
+	                                  Duration,
+	                                  false);
 }

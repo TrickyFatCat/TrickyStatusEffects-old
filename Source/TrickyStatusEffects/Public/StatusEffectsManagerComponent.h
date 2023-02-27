@@ -9,7 +9,8 @@
 class UStatusEffect;
 class AActor;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnStatusEffectAddedSignature, UStatusEffect*, StatusEffect, AActor*, Target, AActor*, Instigator);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnStatusEffectAddedSignature, UStatusEffect*, StatusEffect, AActor*,
+                                               Target, AActor*, Instigator);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYSTATUSEFFECTS_API UStatusEffectsManagerComponent : public UActorComponent
@@ -24,29 +25,36 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="StatusEffectsManager")
 	FOnStatusEffectAddedSignature OnStatusEffectAdded;
-	
+
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	UStatusEffect* AddEffect(TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	bool RemoveAllEffects();
+	bool RemoveAllEffects(const bool bCustomReason = false);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	bool RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass, const bool bIgnoreStacks = true);
+	bool RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass,
+	                         const bool bIgnoreStacks = true,
+	                         const bool bCustomReason = false);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	bool RemoveAllEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass);
+	bool RemoveAllEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass, const bool bCustomReason = false);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
 	                                     const AActor* Instigator,
-	                                     const bool bIgnoreStacks = true);
+	                                     const bool bIgnoreStacks = true,
+	                                     const bool bCustomReason = false);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	bool RemoveAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass, const AActor* Instigator);
+	bool RemoveAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
+	                                         const AActor* Instigator,
+	                                         const bool bCustomReason = false);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	bool RemoveEffectByObject(UStatusEffect* StatusEffect, const bool bIgnoreStacks = true);
+	bool RemoveEffectByObject(UStatusEffect* StatusEffect,
+	                          const bool bIgnoreStacks = true,
+	                          const bool bCustomReason = false);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool HasEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
@@ -71,11 +79,13 @@ private:
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category="StatusEffectsManager", AdvancedDisplay)
 	bool bDebugEnabled = false;
-	
+
 	void PrintDebugData(const float DeltaTime);
 #endif
-	
+
 	UStatusEffect* CreateEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
+
+	void FinishEffect(UStatusEffect* Effect, const bool bCustomReason);
 
 	int32 GetNumberOfEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass) const;
 

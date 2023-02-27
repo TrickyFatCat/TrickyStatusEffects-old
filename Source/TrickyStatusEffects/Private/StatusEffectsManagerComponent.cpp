@@ -63,7 +63,7 @@ UStatusEffect* UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStat
 	return CreateEffect(EffectClass, Instigator);
 }
 
-bool UStatusEffectsManagerComponent::RemoveAllEffects()
+bool UStatusEffectsManagerComponent::RemoveAllEffects(const bool bCustomReason)
 {
 	if (ActiveEffects.Num() == 0)
 	{
@@ -78,7 +78,7 @@ bool UStatusEffectsManagerComponent::RemoveAllEffects()
 		}
 
 		Effect->OnStatusEffectDeactivated.Clear();
-		Effect->FinishEffect();
+		FinishEffect(Effect, bCustomReason);
 	}
 
 	ActiveEffects.Empty();
@@ -87,7 +87,8 @@ bool UStatusEffectsManagerComponent::RemoveAllEffects()
 }
 
 bool UStatusEffectsManagerComponent::RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass,
-                                                         const bool bIgnoreStacks)
+                                                         const bool bIgnoreStacks,
+                                                         const bool bCustomReason)
 {
 	if (!EffectClass)
 	{
@@ -101,11 +102,12 @@ bool UStatusEffectsManagerComponent::RemoveEffectOfClass(TSubclassOf<UStatusEffe
 		return false;
 	}
 
-	bIgnoreStacks ? Effect->FinishEffect() : Effect->RemoveStacks();
+	bIgnoreStacks ? FinishEffect(Effect, bCustomReason) : Effect->RemoveStacks();
 	return true;
 }
 
-bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass)
+bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass,
+                                                             const bool bCustomReason)
 {
 	bool bSuccess = false;
 
@@ -130,7 +132,7 @@ bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClass(TSubclassOf<UStatus
 			continue;
 		}
 
-		StatusEffect->FinishEffect();
+		FinishEffect(StatusEffect, bCustomReason);
 		bSuccess = true;
 	}
 
@@ -139,7 +141,8 @@ bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClass(TSubclassOf<UStatus
 
 bool UStatusEffectsManagerComponent::RemoveEffectOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
                                                                      const AActor* Instigator,
-                                                                     const bool bIgnoreStacks)
+                                                                     const bool bIgnoreStacks,
+                                                                     const bool bCustomReason)
 {
 	if (!EffectClass || ActiveEffects.Num() == 0)
 	{
@@ -153,12 +156,13 @@ bool UStatusEffectsManagerComponent::RemoveEffectOfClassByInstigator(TSubclassOf
 		return false;
 	}
 
-	bIgnoreStacks ? Effect->FinishEffect() : Effect->RemoveStacks();
+	bIgnoreStacks ? FinishEffect(Effect, bCustomReason) : Effect->RemoveStacks();
 	return true;
 }
 
 bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClassByInstigator(TSubclassOf<UStatusEffect> EffectClass,
-                                                                         const AActor* Instigator)
+                                                                         const AActor* Instigator,
+                                                                         const bool bCustomReason)
 {
 	bool bSuccess = false;
 
@@ -183,21 +187,23 @@ bool UStatusEffectsManagerComponent::RemoveAllEffectsOfClassByInstigator(TSubcla
 			continue;
 		}
 
-		StatusEffect->FinishEffect();
+		FinishEffect(StatusEffect, bCustomReason);
 		bSuccess = true;
 	}
 
 	return bSuccess;
 }
 
-bool UStatusEffectsManagerComponent::RemoveEffectByObject(UStatusEffect* StatusEffect, const bool bIgnoreStacks)
+bool UStatusEffectsManagerComponent::RemoveEffectByObject(UStatusEffect* StatusEffect,
+	const bool bIgnoreStacks,
+	const bool bCustomReason)
 {
 	if (!IsValid(StatusEffect) || ActiveEffects.Num() == 0 || !ActiveEffects.Contains(StatusEffect))
 	{
 		return false;
 	}
 
-	bIgnoreStacks ? StatusEffect->FinishEffect() : StatusEffect->RemoveStacks();
+	bIgnoreStacks ? FinishEffect(StatusEffect, bCustomReason) : StatusEffect->RemoveStacks();
 	return true;
 }
 
@@ -342,6 +348,11 @@ UStatusEffect* UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<US
 	OnStatusEffectAdded.Broadcast(NewEffect, GetOwner(), Instigator);
 
 	return NewEffect;
+}
+
+void UStatusEffectsManagerComponent::FinishEffect(UStatusEffect* Effect, const bool bCustomReason)
+{
+	Effect->FinishEffect(bCustomReason ? EDeactivationReason::Custom : EDeactivationReason::Remove);
 }
 
 int32 UStatusEffectsManagerComponent::GetNumberOfEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass) const

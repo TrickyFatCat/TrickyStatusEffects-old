@@ -24,12 +24,21 @@ enum class ERestartBehavior : uint8
 	Add
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EStatusEffectUniqueness : uint8
 {
 	Normal,
 	PerInstigator,
 	PerTarget
+};
+
+UENUM(BlueprintType)
+enum class EDeactivationReason : uint8
+{
+	Time,
+	Stacks,
+	Remove,
+	Custom
 };
 
 USTRUCT(BlueprintType)
@@ -108,7 +117,7 @@ public:
 
 	void StartEffect();
 
-	void FinishEffect();
+	void FinishEffect(const EDeactivationReason Reason);
 
 	void ReStartEffect();
 
@@ -148,9 +157,9 @@ protected:
 	virtual void ActivateEffect_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
-	void DeactivateEffect();
+	void DeactivateEffect(const EDeactivationReason Reason);
 
-	virtual void DeactivateEffect_Implementation();
+	virtual void DeactivateEffect_Implementation(const EDeactivationReason Reason);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
 	void ReActivateEffect();
@@ -166,4 +175,7 @@ protected:
 	void StacksDecreased(const int32 Amount);
 
 	virtual void StacksDecreased_Implementation(const int32 Amount);
+
+private:
+	void StartTimer(const UWorld* World, const float Duration);
 };
