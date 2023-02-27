@@ -9,8 +9,10 @@
 class UStatusEffect;
 class AActor;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnStatusEffectAddedSignature, UStatusEffect*, StatusEffect, AActor*,
-                                               Target, AActor*, Instigator);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnStatusEffectAddedSignature,
+                                               UStatusEffect*, StatusEffect,
+                                               AActor*, Target,
+                                               AActor*, Instigator);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYSTATUSEFFECTS_API UStatusEffectsManagerComponent : public UActorComponent
@@ -25,7 +27,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="StatusEffectsManager")
 	FOnStatusEffectAddedSignature OnStatusEffectAdded;
-
+	
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	UStatusEffect* AddEffect(TSubclassOf<UStatusEffect> EffectClass,
 	                         AActor* Instigator,
