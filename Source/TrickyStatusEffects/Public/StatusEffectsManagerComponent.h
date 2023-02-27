@@ -85,7 +85,7 @@ private:
 
 	UStatusEffect* CreateEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
 
-	void FinishEffect(UStatusEffect* Effect, const bool bCustomReason);
+	static void FinishEffect(UStatusEffect* Effect, const bool bCustomReason);
 
 	int32 GetNumberOfEffectsOfClass(TSubclassOf<UStatusEffect> EffectClass) const;
 
