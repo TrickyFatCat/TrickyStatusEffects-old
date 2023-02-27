@@ -143,8 +143,10 @@ public:
 
 	int32 GetCurrentStacks() const { return StatusEffectData.CurrentStacks; }
 
+	UFUNCTION(BlueprintCallable, Category="StatusEffect")
 	bool AddStacks(int32 Amount = 1);
 
+	UFUNCTION(BlueprintCallable, Category="StatusEffect")
 	bool RemoveStacks(int32 Amount = 1);
 
 protected:

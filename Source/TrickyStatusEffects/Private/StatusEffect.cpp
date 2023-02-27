@@ -37,12 +37,6 @@ void UStatusEffect::StartEffect()
 	{
 		if (!StatusEffectData.bInfiniteDuration)
 		{
-			// FTimerDelegate TimerDelegate;
-			// TimerDelegate.BindUObject(this, &UStatusEffect::FinishEffect, EDeactivationReason::Time);
-			// World->GetTimerManager().SetTimer(StatusEffectData.DurationTimerHandle,
-			//                                   TimerDelegate,
-			//                                   StatusEffectData.Duration,
-			//                                   false);
 			StartTimer(World, StatusEffectData.Duration);
 		}
 
@@ -81,10 +75,6 @@ void UStatusEffect::ReStartEffect()
 			const float DeltaDuration = GetRemainingTime();
 
 			TimerManager.ClearTimer(StatusEffectData.DurationTimerHandle);
-			// TimerManager.SetTimer(StatusEffectData.DurationTimerHandle,
-			//                       this,
-			//                       &UStatusEffect::FinishEffect,
-			//                       StatusEffectData.Duration + DeltaDuration);
 			StartTimer(World, StatusEffectData.Duration + DeltaDuration);
 		}
 		break;
@@ -93,10 +83,6 @@ void UStatusEffect::ReStartEffect()
 		if (TimerManager.IsTimerActive(StatusEffectData.DurationTimerHandle))
 		{
 			TimerManager.ClearTimer(StatusEffectData.DurationTimerHandle);
-			// TimerManager.SetTimer(StatusEffectData.DurationTimerHandle,
-			                      // this,
-			                      // &UStatusEffect::FinishEffect,
-			                      // StatusEffectData.Duration);
 			StartTimer(World, StatusEffectData.Duration);
 		}
 		break;
