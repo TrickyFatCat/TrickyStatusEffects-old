@@ -3,6 +3,8 @@
 
 #include "StatusEffect.h"
 
+#include "StatusEffectsManagerComponent.h"
+
 UStatusEffect::UStatusEffect()
 {
 }
@@ -91,6 +93,16 @@ void UStatusEffect::ReStartEffect()
 	
 	ReactivateEffect(StatusEffectData.ReStartBehavior);
 	OnStatusEffectReactivated.Broadcast(this);
+}
+
+void UStatusEffect::SetOwningManager(UStatusEffectsManagerComponent* OwningManager)
+{
+	if (IsValid(StatusEffectData.OwningManager))
+	{
+		return;
+	}
+
+	StatusEffectData.OwningManager = OwningManager;
 }
 
 float UStatusEffect::GetRemainingTime() const

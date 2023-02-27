@@ -495,6 +495,7 @@ UStatusEffect* UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<US
 
 	NewEffect->SetInstigator(Instigator);
 	NewEffect->SetTargetActor(GetOwner());
+	NewEffect->SetOwningManager(this);
 	NewEffect->OnStatusEffectDeactivated.AddDynamic(this, &UStatusEffectsManagerComponent::HandleEffectDeactivation);
 	ActiveEffects.Emplace(NewEffect);
 	NewEffect->StartEffect();

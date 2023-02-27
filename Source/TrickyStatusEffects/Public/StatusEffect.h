@@ -8,6 +8,7 @@
 
 struct FTimerHandle;
 class AActor;
+class UStatusEffectsManagerComponent;
 
 UENUM(BlueprintType)
 enum class EStatusEffectType : uint8
@@ -51,6 +52,9 @@ struct FStatusEffectData
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
 	AActor* TargetActor = nullptr;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
+	UStatusEffectsManagerComponent* OwningManager = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	EStatusEffectType EffectType = EStatusEffectType::Positive;
@@ -113,7 +117,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStatusEffectReactivatedSignature OnStatusEffectReactivated;
-	
+
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStacksAddedSignature OnStacksAdded;
 
@@ -135,6 +139,11 @@ public:
 	AActor* GetTargetActor() const { return StatusEffectData.TargetActor; }
 
 	void SetTargetActor(AActor* TargetActor) { StatusEffectData.TargetActor = TargetActor; }
+
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
+	UStatusEffectsManagerComponent* GetOwningManager() const { return StatusEffectData.OwningManager; }
+
+	void SetOwningManager(UStatusEffectsManagerComponent* OwningManager);
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	EStatusEffectType GetEffectType() const { return StatusEffectData.EffectType; }
