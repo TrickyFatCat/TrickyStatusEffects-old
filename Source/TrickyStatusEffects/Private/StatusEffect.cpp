@@ -46,13 +46,13 @@ void UStatusEffect::StartEffect()
 			StartTimer(World, StatusEffectData.Duration);
 		}
 
-		ActivateEffect();
+		HandleEffectActivation();
 	}
 }
 
 void UStatusEffect::FinishEffect(const EDeactivationReason Reason)
 {
-	DeactivateEffect(Reason);
+	HandleEffectDeactivation(Reason);
 	OnStatusEffectDeactivated.Broadcast(this);
 	this->ConditionalBeginDestroy();
 }
@@ -92,7 +92,7 @@ void UStatusEffect::ReStartEffect()
 		break;
 	}
 	
-	ReactivateEffect(StatusEffectData.ReStartBehavior);
+	HandleEffectReactivation(StatusEffectData.ReStartBehavior);
 	OnStatusEffectReactivated.Broadcast(this);
 }
 
@@ -140,6 +140,7 @@ bool UStatusEffect::AddStacks(int32 Amount)
 	}
 
 	StatusEffectData.CurrentStacks = FMath::Min(StatusEffectData.CurrentStacks + Amount, StatusEffectData.MaxStacks);
+	HandleStacksIncrease(Amount);
 	OnStacksAdded.Broadcast(this, Amount);
 	return true;
 }
@@ -157,6 +158,7 @@ bool UStatusEffect::RemoveStacks(int32 Amount)
 	}
 
 	StatusEffectData.CurrentStacks = FMath::Max(StatusEffectData.CurrentStacks - Amount, 0);
+	HandleStacksDecrease(Amount);
 	OnStacksRemoved.Broadcast(this, Amount);
 
 	if (StatusEffectData.CurrentStacks == 0)
@@ -167,23 +169,23 @@ bool UStatusEffect::RemoveStacks(int32 Amount)
 	return true;
 }
 
-void UStatusEffect::ActivateEffect_Implementation()
+void UStatusEffect::HandleEffectActivation_Implementation()
 {
 }
 
-void UStatusEffect::DeactivateEffect_Implementation(const EDeactivationReason Reason)
+void UStatusEffect::HandleEffectDeactivation_Implementation(const EDeactivationReason Reason)
 {
 }
 
-void UStatusEffect::ReactivateEffect_Implementation(const EReactivationBehavior ReactivationBehavior)
+void UStatusEffect::HandleEffectReactivation_Implementation(const EReactivationBehavior ReactivationBehavior)
 {
 }
 
-void UStatusEffect::StacksIncreased_Implementation(const int32 Amount)
+void UStatusEffect::HandleStacksIncrease_Implementation(const int32 Amount)
 { 
 }
 
-void UStatusEffect::StacksDecreased_Implementation(const int32 Amount)
+void UStatusEffect::HandleStacksDecrease_Implementation(const int32 Amount)
 {
 }
 

@@ -28,7 +28,7 @@ void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
 }
 #endif
 
-UStatusEffect* UStatusEffectsManagerComponent::AddEffect(const TSubclassOf<UStatusEffect> EffectClass,
+UStatusEffect* UStatusEffectsManagerComponent::ApplyEffect(const TSubclassOf<UStatusEffect> EffectClass,
                                                          AActor* Instigator,
                                                          const int32 StacksAmount)
 {
@@ -499,7 +499,7 @@ UStatusEffect* UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<US
 	NewEffect->OnStatusEffectDeactivated.AddDynamic(this, &UStatusEffectsManagerComponent::HandleEffectDeactivation);
 	ActiveEffects.Emplace(NewEffect);
 	NewEffect->StartEffect();
-	OnStatusEffectAdded.Broadcast(NewEffect, GetOwner(), Instigator);
+	OnStatusEffectApplied.Broadcast(NewEffect, GetOwner(), Instigator);
 
 	return NewEffect;
 }

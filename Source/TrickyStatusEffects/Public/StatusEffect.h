@@ -21,26 +21,28 @@ enum class EStatusEffectType : uint8
 UENUM(BlueprintType)
 enum class EReactivationBehavior : uint8
 {
-	Custom,
-	Reset,
-	Add
+	None UMETA(ToolTip="Do nothing"),
+	Custom UMETA(ToolTip="By default do nothing, but can be overriden."),
+	Reset UMETA(ToolTip="Resets the timer."),
+	Add UMETA(ToolTip="Adds default duration to remaining time.")
 };
 
 UENUM(BlueprintType)
 enum class EStatusEffectUniqueness : uint8
 {
-	Normal,
-	PerInstigator,
-	PerTarget
+	Normal UMETA(Tooltip="No limits."),
+	PerInstigator UMETA(Tooltip="Instigator can apply only one status effect of this class on a target."),
+	PerTarget UMETA(Tooltip="Only one status effect of this class can be applied to the target.")
 };
 
+/**Determines the reason of the effect deactivation.*/
 UENUM(BlueprintType)
 enum class EDeactivationReason : uint8
 {
-	Time,
-	Stacks,
-	Remove,
-	Custom
+	Time UMETA(Tooltip="Used when the status effect deactivated when its timer finishes."),
+	Stacks UMETA(Tooltip="Used when current number of stacks reaches 0."),
+	Remove UMETA(Tooltip="Used when the status effect was removed regardless of stacks and remaining time."),
+	Custom UMETA(Tooltip="Used for calling custom logic when the status effect was removed regardless of stacks and remainng time.")
 };
 
 USTRUCT(BlueprintType)
@@ -48,38 +50,46 @@ struct FStatusEffectData
 {
 	GENERATED_BODY()
 
+	/**The actor which applied the status effect.*/
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
 	AActor* Instigator = nullptr;
 
+	/**The target actor of the effect.*/
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
 	AActor* TargetActor = nullptr;
 
+	/**Status effects manager component which handles the status effect.*/
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
 	UStatusEffectsManagerComponent* OwningManager = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	EStatusEffectType EffectType = EStatusEffectType::Positive;
 
+	/**Determines how many instances of the status effect can be created.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	EStatusEffectUniqueness EffectUniqueness = EStatusEffectUniqueness::Normal;
 
+	/**Toggles if the effect will last for some time or infinitely.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	bool bInfiniteDuration = false;
 
+	/**Duration of the effect.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bInfiniteDuration"))
 	float Duration = 5.0f;
-
+	
 	UPROPERTY(BlueprintReadOnly, Category="StatusEffect")
 	FTimerHandle DurationTimerHandle;
 
+	/**Determines how the duration will be recalculated when the status effect was reapplied.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bInfiniteDuration"))
 	EReactivationBehavior ReStartBehavior = EReactivationBehavior::Reset;
 
+	/**Toggles if the status effect can be stacked.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	bool bIsStackable = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="bIsStackable", ClampMin=1))
-	int32 MaxStacks = 1;
+	int32 MaxStacks = 2;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect",
 		meta=(EditCondition="bIsStackable", ClampMin="1"))
@@ -98,7 +108,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksAddedSignature, UStatusEff
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksRemovedSignature, UStatusEffect*, StatusEffect, int32, Amount);
 
 /**
- * 
+ *An object which encapsulates status effect logic. 
  */
 UCLASS(BlueprintType, Blueprintable)
 class TRICKYSTATUSEFFECTS_API UStatusEffect : public UObject
@@ -110,18 +120,23 @@ public:
 
 protected:
 	virtual void PostInitProperties() override;
+	
 	virtual void BeginDestroy() override;
 
 public:
+	/**Called when the status effect was deactivated.*/
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStatusEffectDeactivatedSignature OnStatusEffectDeactivated;
 
+	/**Called when the status effect was reactivated.*/
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStatusEffectReactivatedSignature OnStatusEffectReactivated;
 
+	/**Called when current number of stacks were increased.*/
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStacksAddedSignature OnStacksAdded;
 
+	/**Called when current current number of stacks were decreased.*/
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStacksRemovedSignature OnStacksRemoved;
 
@@ -152,6 +167,7 @@ public:
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	EStatusEffectUniqueness GetUniqueness() const { return StatusEffectData.EffectUniqueness; }
 
+	//**If  InfiniteDuration == true returns duration remaining time, else -1.*/
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	float GetRemainingTime() const;
 
@@ -167,9 +183,11 @@ public:
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	int32 GetCurrentStacks() const { return StatusEffectData.CurrentStacks; }
 
+	/**Increases the number of current stacks.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffect")
 	bool AddStacks(int32 Amount = 1);
 
+	/**Decreases the number of current stacks.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffect")
 	bool RemoveStacks(int32 Amount = 1);
 
@@ -177,30 +195,35 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	FStatusEffectData StatusEffectData;
 
+	/**Called when the status effect was activated.*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
-	void ActivateEffect();
+	void HandleEffectActivation();
 
-	virtual void ActivateEffect_Implementation();
+	virtual void HandleEffectActivation_Implementation();
 
+	/**Called when the status effect was deactivated.*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
-	void DeactivateEffect(const EDeactivationReason Reason);
+	void HandleEffectDeactivation(const EDeactivationReason Reason);
 
-	virtual void DeactivateEffect_Implementation(const EDeactivationReason Reason);
+	virtual void HandleEffectDeactivation_Implementation(const EDeactivationReason Reason);
 
+	/**Called when the status effect was reactivated.*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
-	void ReactivateEffect(const EReactivationBehavior ReactivationBehavior);
+	void HandleEffectReactivation(const EReactivationBehavior ReactivationBehavior);
 
-	virtual void ReactivateEffect_Implementation(const EReactivationBehavior ReactivationBehavior);
-
+	virtual void HandleEffectReactivation_Implementation(const EReactivationBehavior ReactivationBehavior);
+	
+	/**Called when number of stacks was increased.*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
-	void StacksIncreased(const int32 Amount);
+	void HandleStacksIncrease(const int32 Amount);
 
-	virtual void StacksIncreased_Implementation(const int32 Amount);
+	virtual void HandleStacksIncrease_Implementation(const int32 Amount);
 
+	/**Called when number of stacks was decreased.*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
-	void StacksDecreased(const int32 Amount);
+	void HandleStacksDecrease(const int32 Amount);
 
-	virtual void StacksDecreased_Implementation(const int32 Amount);
+	virtual void HandleStacksDecrease_Implementation(const int32 Amount);
 
 private:
 	void StartTimer(const UWorld* World, const float Duration);

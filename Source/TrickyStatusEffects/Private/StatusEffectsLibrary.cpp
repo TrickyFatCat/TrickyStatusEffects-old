@@ -17,10 +17,10 @@ UStatusEffectsManagerComponent* UStatusEffectsLibrary::GetStatusEffectsManager(A
 	return TargetActor->FindComponentByClass<UStatusEffectsManagerComponent>();
 }
 
-UStatusEffect* UStatusEffectsLibrary::AddStatusEffect(TSubclassOf<UStatusEffect> EffectClass,
-                                                      AActor* TargetActor,
-                                                      AActor* Instigator,
-                                                      const int32 StacksAmount)
+UStatusEffect* UStatusEffectsLibrary::ApplyStatusEffect(TSubclassOf<UStatusEffect> EffectClass,
+                                                        AActor* TargetActor,
+                                                        AActor* Instigator,
+                                                        const int32 StacksAmount)
 {
 	if (!IsValid(TargetActor))
 	{
@@ -34,7 +34,7 @@ UStatusEffect* UStatusEffectsLibrary::AddStatusEffect(TSubclassOf<UStatusEffect>
 		return nullptr;
 	}
 
-	return StatusEffectsManagerComponent->AddEffect(EffectClass, Instigator, StacksAmount);
+	return StatusEffectsManagerComponent->ApplyEffect(EffectClass, Instigator, StacksAmount);
 }
 
 bool UStatusEffectsLibrary::RemoveAllStatusEffects(AActor* TargetActor, const bool bCustomReason)
@@ -289,25 +289,6 @@ UStatusEffect* UStatusEffectsLibrary::GetStatusEffectOfClass(AActor* TargetActor
 	return StatusEffectsManagerComponent->GetEffectOfClass(EffectClass);
 }
 
-bool UStatusEffectsLibrary::HasStatusEffectOfClassByInstigator(AActor* TargetActor,
-                                                               TSubclassOf<UStatusEffect> EffectClass,
-                                                               const AActor* Instigator)
-{
-	if (!IsValid(TargetActor))
-	{
-		return false;
-	}
-
-	UStatusEffectsManagerComponent* StatusEffectsManagerComponent = GetStatusEffectsManager(TargetActor);
-
-	if (!StatusEffectsManagerComponent)
-	{
-		return false;
-	}
-
-	return StatusEffectsManagerComponent->HasEffectOfClassByInstigator(EffectClass, Instigator);
-}
-
 bool UStatusEffectsLibrary::GetAllStatusEffectsOfClass(AActor* TargetActor,
                                                        const TSubclassOf<UStatusEffect> EffectClass,
                                                        TArray<UStatusEffect*>& Effects)
@@ -325,6 +306,25 @@ bool UStatusEffectsLibrary::GetAllStatusEffectsOfClass(AActor* TargetActor,
 	}
 
 	return StatusEffectsManagerComponent->GetAllEffectsOfClass(EffectClass, Effects);
+}
+
+bool UStatusEffectsLibrary::HasStatusEffectOfClassByInstigator(AActor* TargetActor,
+                                                               TSubclassOf<UStatusEffect> EffectClass,
+                                                               const AActor* Instigator)
+{
+	if (!IsValid(TargetActor))
+	{
+		return false;
+	}
+
+	UStatusEffectsManagerComponent* StatusEffectsManagerComponent = GetStatusEffectsManager(TargetActor);
+
+	if (!StatusEffectsManagerComponent)
+	{
+		return false;
+	}
+
+	return StatusEffectsManagerComponent->HasEffectOfClassByInstigator(EffectClass, Instigator);
 }
 
 UStatusEffect* UStatusEffectsLibrary::GetStatusEffectOfClassByInstigator(AActor* TargetActor,
