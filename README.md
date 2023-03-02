@@ -94,23 +94,40 @@ By default it has one variable `StatusEffectData`, this structure contains:
 
 ### StatusEffectsManagerComponent
 
+An actor component which handles status effects applied to its owner.
+
 #### Variables
+
+1. `ActiveEffects` - an array of active effects;
+2. `DebugEnabled` - toggles debug information on screen in editor;
 
 #### Functions
 
+1. `ApplyEffect` - applies a new status effect or reapplies already applied effect;
+2. `RemoveAllEffects` - removes all status effects regardless of time and stacks;
+3. `RemoveAllPositiveEffects` - removes all positive status effects regardless of time and stacks;
+4. `RemoveAllNegativeEffects` - removes all negative status effects regardless of time and stacks;
+5. `RemoveAllNeutralEffects` - removes all neutral status effects regardless of time and stacks;
+6. `RemoveEffectOfClass` - removes the first found status effect of a given class;
+7. `RemoveAllEffectsOfClass` - removes all status effects of a given class regardless of remaining time and stacks;
+8. `RemoveEffectOfClassByInstigator` - removes the first found status effect of a given class of specific instigator;
+9. `RemoveAllEffectsOfClassByInstigator` - removes all status effects of a given class of specific instigator regardless of remaining time and stacks;
+10. `RemoveEffectByObject` - removes a specific instance of the status effect;
+11. `GetAllActiveEffects` - returns all active status effects;
+12. `GetAllPositiveEffects` - returns all active positive status effects;
+13. `GetAllNegativeEffects` - returns all active negative status effects;
+14. `GetAllNeutralEffects` - returns all active neutral status effects;
+15. `HasEffectOfClass` - checks if the status effect of a given class is active;
+16. `GetEffectOfClass` - returns the status effect instance of the given class;
+17. `GetAllEffectsOfClass` - returns all status effect instances of the given class;
+18. `HesEffectOfClassByInstigator` - checks if the status effect of a given class and instigator is active;
+19. `GetEffectOfClassByInstigator` - returns the status effect instance of the given class and instigator;
+20. `GetAllEffectsOfClassByInstigator` - returns all status effect instances of the given class and instigator;
+
 #### Delegates
+
+1. `OnStatusEffectApplied` - called when a new status effect applied or old effect reapplied;
 
 ### StatusEffectsLibrary
 
-#### Variables
-
 #### Functions
-
-#### Delegates
-
-
-
-
-
-
-

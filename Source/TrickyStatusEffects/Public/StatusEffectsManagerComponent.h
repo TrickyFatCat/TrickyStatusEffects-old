@@ -28,11 +28,11 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-	/**Called when a new status effect applied.*/
+	/**Called when a new status effect applied or old effect reapplied.*/
 	UPROPERTY(BlueprintAssignable, Category="StatusEffectsManager")
 	FOnStatusEffectAppliedSignature OnStatusEffectApplied;
 
-	/**Applies status effect or reapplies already applied effect.*/
+	/**Applies a new status effect or reapplies already applied effect.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	UStatusEffect* ApplyEffect(TSubclassOf<UStatusEffect> EffectClass,
 	                         AActor* Instigator,
