@@ -10,7 +10,7 @@ The plugin can be used in both C++ and Blueprint projects.
 
 **At the moment, the package is compatible only with Unreal Engine 4.**
 
-1. Download the latest [**package file**](https://github.com/TrickyFatCat/TrickyPickups/releases);
+1. Download the latest [**package file**](https://github.com/TrickyFatCat/TrickyStatusEffects/releases);
 2. Unzip the package into Plugins folder of your project, e.g. `D:\UnrealProjects\MyProject\Plugins`;
 3. Restart the project;
 
@@ -20,6 +20,10 @@ The plugin can be used in both C++ and Blueprint projects.
 2. Create the TrickyAnimationComponents folder in the Plugins folder;
 3. Download the plugin source code into that folder;
 4. Rebuild the project;
+
+## Other Plugins
+
+You can find other plugins on my [**itch.io**](https://tricky-fat-cat.itch.io/tricky-prototyping-collection);
 
 ## Content
 
@@ -130,4 +134,27 @@ An actor component which handles status effects applied to its owner.
 
 ### StatusEffectsLibrary
 
+A utility library for applying, removing, and getting status effects.
+
 #### Functions
+
+1. `ApplyStatusEffect` - applies a new status effect or reapplies already applied effect;
+2. `RemoveAllStatusEffects` - removes all status effects regardless of time and stacks;
+3. `RemoveAllPositiveStatusEffects` - removes all positive status effects regardless of time and stacks;
+4. `RemoveAllNegativeStatusEffects` - removes all negative status effects regardless of time and stacks;
+5. `RemoveAllNeutralStatusEffects` - removes all neutral status effects regardless of time and stacks;
+6. `RemoveStatusEffectOfClass` - removes the first found status effect of a given class;
+7. `RemoveAllStatusEffectsOfClass` - removes all status effects of a given class regardless of remaining time and stacks;
+8. `RemoveStatusEffectOfClassByInstigator` - removes the first found status effect of a given class of specific instigator;
+9. `RemoveAllStatusEffectsOfClassByInstigator` - removes all status effects of a given class of specific instigator regardless of remaining time and stacks;
+10. `RemoveStatusEffectByObject` - removes a specific instance of the status effect;
+11. `GetAllActiveStatusEffects` - returns all active status effects;
+12. `GetAllPositiveStatusEffects` - returns all active positive status effects;
+13. `GetAllNegativeStatusEffects` - returns all active negative status effects;
+14. `GetAllNeutralStatusEffects` - returns all active neutral status effects;
+15. `HasStatusEffectOfClass` - checks if the status effect of a given class is active;
+16. `GetStatusEffectOfClass` - returns the status effect instance of the given class;
+17. `GetAllStatusEffectsOfClass` - returns all status effect instances of the given class;
+18. `HesStatusEffectOfClassByInstigator` - checks if the status effect of a given class and instigator is active;
+19. `GetStatusEffectOfClassByInstigator` - returns the status effect instance of the given class and instigator;
+20. `GetAllStatusEffectsOfClassByInstigator` - returns all status effect instances of the given class and instigator;
