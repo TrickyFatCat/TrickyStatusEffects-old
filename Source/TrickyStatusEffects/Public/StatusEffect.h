@@ -22,10 +22,10 @@ enum class EStatusEffectType : uint8
 UENUM(BlueprintType)
 enum class EReactivationBehavior : uint8
 {
-	None UMETA(ToolTip="Do nothing"),
-	Custom UMETA(ToolTip="By default do nothing, but can be overriden."),
-	Reset UMETA(ToolTip="Resets the timer."),
-	Add UMETA(ToolTip="Adds default duration to remaining time.")
+	None UMETA(ToolTip="No changes."),
+	Custom UMETA(ToolTip="By default no changes, but can be overriden."),
+	Reset UMETA(ToolTip="Reset the timer."),
+	Add UMETA(ToolTip="Add default duration to remaining time.")
 };
 
 UENUM(BlueprintType)
@@ -70,7 +70,7 @@ struct FStatusEffectData
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	EStatusEffectUniqueness EffectUniqueness = EStatusEffectUniqueness::Normal;
 
-	/**Toggles if the effect will last for some time or infinitely.*/
+	/**Toggles if the status effect has infinite duration or not.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	bool bIsInfinite = false;
 
@@ -169,15 +169,19 @@ public:
 	EStatusEffectUniqueness GetUniqueness() const { return StatusEffectData.EffectUniqueness; }
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
-	bool IsInfinite() const { return StatusEffectData.bIsInfinite; }
+	bool GetIsInfinite() const { return StatusEffectData.bIsInfinite; }
 
 	/**If InfiniteDuration == false, returns duration, else -1.*/
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	float GetDuration() const { return StatusEffectData.bIsInfinite ? -1.0 : StatusEffectData.Duration; }
 
-	/**If  InfiniteDuration == false returns ration remaining time, else -1.*/
+	/**If  InfiniteDuration == false returns remaining time, else -1.*/
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	float GetRemainingTime() const;
+
+	/**If  InfiniteDuration == false returns elapsed time, else -1.*/
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
+	float GetElapsedTime() const;
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	EReactivationBehavior GetRestartBehavior() const { return StatusEffectData.ReActivationBehavior; }

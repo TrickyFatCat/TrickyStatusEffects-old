@@ -91,7 +91,7 @@ void UStatusEffect::ReStartEffect()
 		}
 		break;
 	}
-	
+
 	HandleEffectReactivation(StatusEffectData.ReActivationBehavior);
 	OnStatusEffectReactivated.Broadcast(this);
 }
@@ -123,6 +123,25 @@ float UStatusEffect::GetRemainingTime() const
 	}
 
 	return RemainingTime;
+}
+
+float UStatusEffect::GetElapsedTime() const
+{
+	float ElapsedTime = -1.f;
+
+	if (StatusEffectData.bIsInfinite)
+	{
+		return ElapsedTime;
+	}
+
+	const UWorld* World = GetWorld();
+
+	if (World)
+	{
+		ElapsedTime = World->GetTimerManager().GetTimerElapsed(StatusEffectData.DurationTimerHandle);
+	}
+
+	return ElapsedTime;
 }
 
 bool UStatusEffect::AddStacks(int32 Amount)
@@ -182,7 +201,7 @@ void UStatusEffect::HandleEffectReactivation_Implementation(const EReactivationB
 }
 
 void UStatusEffect::HandleStacksIncrease_Implementation(const int32 Amount)
-{ 
+{
 }
 
 void UStatusEffect::HandleStacksDecrease_Implementation(const int32 Amount)
