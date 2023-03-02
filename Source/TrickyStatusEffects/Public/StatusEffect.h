@@ -133,11 +133,11 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStatusEffectReactivatedSignature OnStatusEffectReactivated;
 
-	/**Called when current number of stacks were increased.*/
+	/**Called when current number of stacks was increased.*/
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStacksAddedSignature OnStacksAdded;
 
-	/**Called when current current number of stacks were decreased.*/
+	/**Called when current current number of stacks was decreased.*/
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStacksRemovedSignature OnStacksRemoved;
 
@@ -195,11 +195,11 @@ public:
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	int32 GetCurrentStacks() const { return StatusEffectData.CurrentStacks; }
 
-	/**Increases the number of current stacks.*/
+	/**Increases the number of stacks.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffect")
 	bool AddStacks(int32 Amount = 1);
 
-	/**Decreases the number of current stacks.*/
+	/**Decreases the number of stacks.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffect")
 	bool RemoveStacks(int32 Amount = 1);
 
