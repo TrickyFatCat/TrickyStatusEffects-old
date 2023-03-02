@@ -11,7 +11,7 @@ class UStatusEffectsManagerComponent;
 class AActor;
 
 /**
- * A helper library for applying and removing status effects.
+ * A utility library for applying, removing, and getting status effects.
  */
 UCLASS()
 class TRICKYSTATUSEFFECTS_API UStatusEffectsLibrary : public UBlueprintFunctionLibrary
@@ -40,6 +40,10 @@ class TRICKYSTATUSEFFECTS_API UStatusEffectsLibrary : public UBlueprintFunctionL
 	/**Removes all negative status effects regardless of remaining time and stacks.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	static bool RemoveAllNegativeStatusEffects(AActor* TargetActor, const bool bCustomReason = false);
+
+	/**Removes all neutral status effects regardless of remaining time and stacks.*/
+	UFUNCTION(BlueprintCallable, Category="StatusEffects")
+	static bool RemoveAllNeutralStatusEffects(AActor* TargetActor, const bool bCustomReason = false);
 
 	/**Removes the first found status effect of a given class.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
@@ -90,6 +94,10 @@ class TRICKYSTATUSEFFECTS_API UStatusEffectsLibrary : public UBlueprintFunctionL
 	/**Returns all active negative status effects.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	static bool GetAllNegativeStatusEffects(AActor* TargetActor, TArray<UStatusEffect*>& NegativeEffects);
+
+	/**Returns all active neutral status effects.*/
+	UFUNCTION(BlueprintCallable, Category="StatusEffects")
+	static bool GetAllNeutralStatusEffects(AActor* TargetActor, TArray<UStatusEffect*>& NeutralEffects);
 
 	/**Checks if the status effect of a given class is active.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")

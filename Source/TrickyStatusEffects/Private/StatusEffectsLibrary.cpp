@@ -88,6 +88,24 @@ bool UStatusEffectsLibrary::RemoveAllNegativeStatusEffects(AActor* TargetActor, 
 	return StatusEffectsManagerComponent->RemoveAllNegativeEffects(bCustomReason);
 }
 
+bool UStatusEffectsLibrary::RemoveAllNeutralStatusEffects(AActor* TargetActor, const bool bCustomReason)
+{
+	if (!IsValid(TargetActor))
+	{
+		return false;
+	}
+
+	UStatusEffectsManagerComponent* StatusEffectsManagerComponent = GetStatusEffectsManager(TargetActor);
+
+	if (!StatusEffectsManagerComponent)
+	{
+		return false;
+	}
+
+	return StatusEffectsManagerComponent->RemoveAllNegativeEffects(bCustomReason);
+}
+
+
 bool UStatusEffectsLibrary::RemoveStatusEffectOfClass(AActor* TargetActor,
                                                       TSubclassOf<UStatusEffect> EffectClass,
                                                       const bool bCustomReason,
@@ -252,6 +270,23 @@ bool UStatusEffectsLibrary::GetAllNegativeStatusEffects(AActor* TargetActor,
 	}
 
 	return StatusEffectsManagerComponent->GetAllNegativeEffects(NegativeEffects);
+}
+
+bool UStatusEffectsLibrary::GetAllNeutralStatusEffects(AActor* TargetActor, TArray<UStatusEffect*>& NeutralEffects)
+{
+	if (!IsValid(TargetActor))
+	{
+		return false;
+	}
+
+	const UStatusEffectsManagerComponent* StatusEffectsManagerComponent = GetStatusEffectsManager(TargetActor);
+
+	if (!StatusEffectsManagerComponent)
+	{
+		return false;
+	}
+
+	return StatusEffectsManagerComponent->GetAllNegativeEffects(NeutralEffects);
 }
 
 bool UStatusEffectsLibrary::HasStatusEffectOfClass(AActor* TargetActor, TSubclassOf<UStatusEffect> EffectClass)
