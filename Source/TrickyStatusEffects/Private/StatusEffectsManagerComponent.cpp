@@ -29,8 +29,8 @@ void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
 #endif
 
 UStatusEffect* UStatusEffectsManagerComponent::ApplyEffect(const TSubclassOf<UStatusEffect> EffectClass,
-                                                         AActor* Instigator,
-                                                         const int32 StacksAmount)
+                                                           AActor* Instigator,
+                                                           const int32 StacksAmount)
 {
 	if (!EffectClass)
 	{
@@ -120,6 +120,29 @@ bool UStatusEffectsManagerComponent::RemoveAllNegativeEffects(const bool bCustom
 	for (const auto& Effect : ActiveEffects)
 	{
 		if (!IsValid(Effect) || Effect->GetEffectType() != EStatusEffectType::Negative)
+		{
+			continue;
+		}
+
+		Effect->OnStatusEffectDeactivated.Clear();
+		FinishEffect(Effect, bCustomReason);
+	}
+
+	ActiveEffects.Empty();
+
+	return true;
+}
+
+bool UStatusEffectsManagerComponent::RemoveAllNeutralEffects(const bool bCustomReason)
+{
+	if (ActiveEffects.Num() == 0)
+	{
+		return false;
+	}
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect) || Effect->GetEffectType() != EStatusEffectType::Neutral)
 		{
 			continue;
 		}
@@ -260,7 +283,7 @@ bool UStatusEffectsManagerComponent::GetAllActiveEffects(TArray<UStatusEffect*>&
 	{
 		return false;
 	}
-	
+
 	Effects = ActiveEffects;
 	return true;
 }
@@ -311,6 +334,32 @@ bool UStatusEffectsManagerComponent::GetAllNegativeEffects(TArray<UStatusEffect*
 	}
 
 	return NegativeEffects.Num() > 0;
+}
+
+bool UStatusEffectsManagerComponent::GetAllNeutralEffects(TArray<UStatusEffect*>& NeutralEffects) const
+{
+	if (ActiveEffects.Num() == 0)
+	{
+		return false;
+	}
+	if (ActiveEffects.Num() == 0)
+	{
+		return false;
+	}
+
+	NeutralEffects.Empty();
+
+	for (const auto& Effect : ActiveEffects)
+	{
+		if (!IsValid(Effect) || Effect->GetEffectType() != EStatusEffectType::Negative)
+		{
+			continue;
+		}
+
+		NeutralEffects.Emplace(Effect);
+	}
+
+	return NeutralEffects.Num() > 0;
 }
 
 bool UStatusEffectsManagerComponent::HasEffectOfClass(const TSubclassOf<UStatusEffect> EffectClass)

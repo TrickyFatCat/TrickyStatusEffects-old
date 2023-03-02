@@ -50,6 +50,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveAllNegativeEffects(const bool bCustomReason = false);
 
+	/**Removes all neutral status effects regardless of remaining time and stacks.*/
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool RemoveAllNeutralEffects(const bool bCustomReason = false);
+
 	/**Removes the first found status effect of a given class.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool RemoveEffectOfClass(TSubclassOf<UStatusEffect> EffectClass,
@@ -94,6 +98,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool GetAllNegativeEffects(TArray<UStatusEffect*>& NegativeEffects) const;
 
+	/**Returns all active neutral status effects.*/
+	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
+	bool GetAllNeutralEffects(TArray<UStatusEffect*>& NeutralEffects) const;
+	
 	/**Checks if the status effect of a given class is active.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
 	bool HasEffectOfClass(TSubclassOf<UStatusEffect> EffectClass);
@@ -129,7 +137,7 @@ protected:
 
 private:
 #if WITH_EDITORONLY_DATA
-	/**Turned on the debug on screen information*/
+	/**Toggles debug information on screen in editor.*/
 	UPROPERTY(EditAnywhere, Category="StatusEffectsManager", AdvancedDisplay)
 	bool bDebugEnabled = false;
 
