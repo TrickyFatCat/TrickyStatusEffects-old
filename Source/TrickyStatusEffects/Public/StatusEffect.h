@@ -184,7 +184,7 @@ public:
 	float GetElapsedTime() const;
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
-	EReactivationBehavior GetRestartBehavior() const { return StatusEffectData.ReActivationBehavior; }
+	EReactivationBehavior GetReactivationBehavior() const { return StatusEffectData.ReActivationBehavior; }
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	bool IsStackable() const { return StatusEffectData.bIsStackable; }

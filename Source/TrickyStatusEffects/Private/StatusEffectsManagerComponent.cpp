@@ -454,7 +454,7 @@ void UStatusEffectsManagerComponent::PrintDebugData(const float DeltaTime)
 				*Effect->GetName(),
 				*InstigatorName,
 				*UEnum::GetDisplayValueAsText(Effect->GetUniqueness()).ToString(),
-				*UEnum::GetDisplayValueAsText(Effect->GetRestartBehavior()).ToString(),
+				*UEnum::GetDisplayValueAsText(Effect->GetReactivationBehavior()).ToString(),
 				*FString::SanitizeFloat(RemainingTime, 2),
 				Effect->GetCurrentStacks(),
 				Effect->GetMaxStacks());
