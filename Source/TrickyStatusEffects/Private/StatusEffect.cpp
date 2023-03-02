@@ -41,7 +41,7 @@ void UStatusEffect::StartEffect()
 
 	if (World && !World->IsPreviewWorld())
 	{
-		if (!StatusEffectData.bInfiniteDuration)
+		if (!StatusEffectData.bIsInfinite)
 		{
 			StartTimer(World, StatusEffectData.Duration);
 		}
@@ -68,7 +68,7 @@ void UStatusEffect::ReStartEffect()
 
 	FTimerManager& TimerManager = World->GetTimerManager();
 
-	switch (StatusEffectData.ReStartBehavior)
+	switch (StatusEffectData.ReActivationBehavior)
 	{
 	case EReactivationBehavior::Custom:
 		break;
@@ -92,7 +92,7 @@ void UStatusEffect::ReStartEffect()
 		break;
 	}
 	
-	HandleEffectReactivation(StatusEffectData.ReStartBehavior);
+	HandleEffectReactivation(StatusEffectData.ReActivationBehavior);
 	OnStatusEffectReactivated.Broadcast(this);
 }
 
@@ -110,7 +110,7 @@ float UStatusEffect::GetRemainingTime() const
 {
 	float RemainingTime = -1.f;
 
-	if (StatusEffectData.bInfiniteDuration)
+	if (StatusEffectData.bIsInfinite)
 	{
 		return RemainingTime;
 	}

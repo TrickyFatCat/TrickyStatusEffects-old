@@ -15,7 +15,8 @@ UENUM(BlueprintType)
 enum class EStatusEffectType : uint8
 {
 	Positive,
-	Negative
+	Negative,
+	Neutral
 };
 
 UENUM(BlueprintType)
@@ -54,11 +55,11 @@ struct FStatusEffectData
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
 	AActor* Instigator = nullptr;
 
-	/**The target actor of the effect.*/
+	/**The target actor of the status effect.*/
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
 	AActor* TargetActor = nullptr;
 
-	/**Status effects manager component which handles the status effect.*/
+	/**Status effects manager component which owns the status effect.*/
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
 	UStatusEffectsManagerComponent* OwningManager = nullptr;
 
@@ -71,18 +72,18 @@ struct FStatusEffectData
 
 	/**Toggles if the effect will last for some time or infinitely.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
-	bool bInfiniteDuration = false;
+	bool bIsInfinite = false;
 
 	/**Duration of the effect.*/
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bInfiniteDuration"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bIsInfinite"))
 	float Duration = 5.0f;
 	
 	UPROPERTY(BlueprintReadOnly, Category="StatusEffect")
 	FTimerHandle DurationTimerHandle;
 
 	/**Determines how the duration will be recalculated when the status effect was reapplied.*/
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bInfiniteDuration"))
-	EReactivationBehavior ReStartBehavior = EReactivationBehavior::Reset;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
+	EReactivationBehavior ReActivationBehavior = EReactivationBehavior::None;
 
 	/**Toggles if the status effect can be stacked.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
@@ -167,12 +168,19 @@ public:
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	EStatusEffectUniqueness GetUniqueness() const { return StatusEffectData.EffectUniqueness; }
 
-	//**If  InfiniteDuration == true returns duration remaining time, else -1.*/
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
+	bool IsInfinite() const { return StatusEffectData.bIsInfinite; }
+
+	/**If InfiniteDuration == false, returns duration, else -1.*/
+	UFUNCTION(BlueprintPure, Category="StatusEffect")
+	float GetDuration() const { return StatusEffectData.bIsInfinite ? -1.0 : StatusEffectData.Duration; }
+
+	/**If  InfiniteDuration == false returns ration remaining time, else -1.*/
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	float GetRemainingTime() const;
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
-	EReactivationBehavior GetRestartBehavior() const { return StatusEffectData.ReStartBehavior; }
+	EReactivationBehavior GetRestartBehavior() const { return StatusEffectData.ReActivationBehavior; }
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	bool IsStackable() const { return StatusEffectData.bIsStackable; }
