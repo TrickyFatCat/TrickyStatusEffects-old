@@ -11,7 +11,9 @@ The plugin can be used in both C++ and Blueprint projects.
 **At the moment, the package is compatible only with Unreal Engine 4.**
 
 1. Download the latest [**package file**](https://github.com/TrickyFatCat/TrickyStatusEffects/releases);
-2. Unzip the package into Plugins folder of your project, e.g. `D:\UnrealProjects\MyProject\Plugins`;
+2. Install the plugin either in your project or for all projects in engine:
+   * Unzip the package into Plugins folder of your project, e.g. `D:\UnrealProjects\MyProject\Plugins`;
+   * Unzip the package to the Plugins folder in engine folder, e.g. `C:\Program Files\Epic Games\UE_5.0\Engine\Plugins`;
 3. Restart the project;
 
 ### C++ projects
