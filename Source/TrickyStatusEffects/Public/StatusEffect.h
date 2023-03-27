@@ -43,7 +43,9 @@ enum class EDeactivationReason : uint8
 	Time UMETA(Tooltip="Used when the status effect deactivated when its timer finishes."),
 	Stacks UMETA(Tooltip="Used when current number of stacks reaches 0."),
 	Remove UMETA(Tooltip="Used when the status effect was removed regardless of stacks and remaining time."),
-	Custom UMETA(Tooltip="Used for calling custom logic when the status effect was removed regardless of stacks and remainng time.")
+	Custom UMETA(
+		Tooltip=
+		"Used for calling custom logic when the status effect was removed regardless of stacks and remainng time.")
 };
 
 USTRUCT(BlueprintType)
@@ -53,15 +55,15 @@ struct FStatusEffectData
 
 	/**The actor which applied the status effect.*/
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
-	AActor* Instigator = nullptr;
+	TObjectPtr<AActor> Instigator = nullptr;
 
 	/**The target actor of the status effect.*/
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
-	AActor* TargetActor = nullptr;
+	TObjectPtr<AActor> TargetActor = nullptr;
 
 	/**Status effects manager component which owns the status effect.*/
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="StatusEffect")
-	UStatusEffectsManagerComponent* OwningManager = nullptr;
+	TObjectPtr<UStatusEffectsManagerComponent> OwningManager = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
 	EStatusEffectType EffectType = EStatusEffectType::Positive;
@@ -77,7 +79,7 @@ struct FStatusEffectData
 	/**Duration of the effect.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="!bIsInfinite"))
 	float Duration = 5.0f;
-	
+
 	UPROPERTY(BlueprintReadOnly, Category="StatusEffect")
 	FTimerHandle DurationTimerHandle;
 
@@ -100,13 +102,13 @@ struct FStatusEffectData
 	int32 CurrentStacks = 1;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectDeactivatedSignature, class UStatusEffect*, StatusEffect);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectActionPerformedSignature, class UStatusEffect*, StatusEffect)
+;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectReactivatedSignature, class UStatusEffect*, StatusEffect);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksAddedSignature, UStatusEffect*, StatusEffect, int32, Amount);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksRemovedSignature, UStatusEffect*, StatusEffect, int32, Amount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnStacksNumberChangedSignature,
+                                               UStatusEffect*, StatusEffect,
+                                               int32, NewValue,
+                                               int32, DeltaValue);
 
 /**
  *An object which encapsulates status effect logic. 
@@ -121,25 +123,25 @@ public:
 
 protected:
 	virtual void PostInitProperties() override;
-	
+
 	virtual void BeginDestroy() override;
 
 public:
 	/**Called when the status effect was deactivated.*/
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
-	FOnStatusEffectDeactivatedSignature OnStatusEffectDeactivated;
+	FOnStatusEffectActionPerformedSignature OnStatusEffectDeactivated;
 
 	/**Called when the status effect was reactivated.*/
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
-	FOnStatusEffectReactivatedSignature OnStatusEffectReactivated;
+	FOnStatusEffectActionPerformedSignature OnStatusEffectReactivated;
 
 	/**Called when current number of stacks was increased.*/
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
-	FOnStacksAddedSignature OnStacksAdded;
+	FOnStacksNumberChangedSignature OnStacksAdded;
 
 	/**Called when current current number of stacks was decreased.*/
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
-	FOnStacksRemovedSignature OnStacksRemoved;
+	FOnStacksNumberChangedSignature OnStacksRemoved;
 
 	void StartEffect();
 
@@ -224,7 +226,7 @@ protected:
 	void HandleEffectReactivation(const EReactivationBehavior ReactivationBehavior);
 
 	virtual void HandleEffectReactivation_Implementation(const EReactivationBehavior ReactivationBehavior);
-	
+
 	/**Called when number of stacks was increased.*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
 	void HandleStacksIncrease(const int32 Amount);

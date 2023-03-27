@@ -160,7 +160,7 @@ bool UStatusEffect::AddStacks(int32 Amount)
 
 	StatusEffectData.CurrentStacks = FMath::Min(StatusEffectData.CurrentStacks + Amount, StatusEffectData.MaxStacks);
 	HandleStacksIncrease(Amount);
-	OnStacksAdded.Broadcast(this, Amount);
+	OnStacksAdded.Broadcast(this, StatusEffectData.CurrentStacks, Amount);
 	return true;
 }
 
@@ -178,7 +178,7 @@ bool UStatusEffect::RemoveStacks(int32 Amount)
 
 	StatusEffectData.CurrentStacks = FMath::Max(StatusEffectData.CurrentStacks - Amount, 0);
 	HandleStacksDecrease(Amount);
-	OnStacksRemoved.Broadcast(this, Amount);
+	OnStacksRemoved.Broadcast(this, StatusEffectData.CurrentStacks, Amount);
 
 	if (StatusEffectData.CurrentStacks == 0)
 	{
