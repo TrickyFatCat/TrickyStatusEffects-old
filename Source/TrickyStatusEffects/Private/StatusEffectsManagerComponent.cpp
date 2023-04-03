@@ -16,17 +16,19 @@ UStatusEffectsManagerComponent::UStatusEffectsManagerComponent()
 #endif
 }
 
-#if WITH_EDITORONLY_DATA
 void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
                                                    ELevelTick TickType,
                                                    FActorComponentTickFunction* ThisTickFunction)
 {
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+#if WITH_EDITORONLY_DATA
 	if (bDebugEnabled)
 	{
 		PrintDebugData(DeltaTime);
 	}
-}
 #endif
+}
 
 UStatusEffect* UStatusEffectsManagerComponent::ApplyEffect(const TSubclassOf<UStatusEffect> EffectClass,
                                                            AActor* Instigator,
