@@ -8,8 +8,6 @@ The plugin can be used in both C++ and Blueprint projects.
 
 ### Blueprint projects
 
-**At the moment, the package is compatible only with Unreal Engine 4.**
-
 1. Download the latest [**package file**](https://github.com/TrickyFatCat/TrickyStatusEffects/releases);
 2. Install the plugin either in your project or for all projects in engine:
    * Unzip the package into Plugins folder of your project, e.g. `D:\UnrealProjects\MyProject\Plugins`;
