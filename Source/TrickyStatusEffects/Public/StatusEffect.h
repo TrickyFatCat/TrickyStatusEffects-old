@@ -152,17 +152,11 @@ public:
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	AActor* GetInstigator() const { return StatusEffectData.Instigator; }
 
-	void SetInstigator(AActor* Instigator) { StatusEffectData.Instigator = Instigator; }
-
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	AActor* GetTargetActor() const { return StatusEffectData.TargetActor; }
 
-	void SetTargetActor(AActor* TargetActor) { StatusEffectData.TargetActor = TargetActor; }
-
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	UStatusEffectsManagerComponent* GetOwningManager() const { return StatusEffectData.OwningManager; }
-
-	void SetOwningManager(UStatusEffectsManagerComponent* OwningManager);
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	EStatusEffectType GetEffectType() const { return StatusEffectData.EffectType; }

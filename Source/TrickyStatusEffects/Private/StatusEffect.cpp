@@ -106,16 +106,6 @@ void UStatusEffect::ReActivate()
 	OnStatusEffectReactivated.Broadcast(this);
 }
 
-void UStatusEffect::SetOwningManager(UStatusEffectsManagerComponent* OwningManager)
-{
-	if (IsValid(StatusEffectData.OwningManager))
-	{
-		return;
-	}
-
-	StatusEffectData.OwningManager = OwningManager;
-}
-
 float UStatusEffect::GetRemainingTime() const
 {
 	float RemainingTime = -1.f;
