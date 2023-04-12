@@ -35,8 +35,13 @@ void UStatusEffect::BeginDestroy()
 }
 
 
-void UStatusEffect::StartEffect()
+bool UStatusEffect::Activate(AActor* TargetActor, AActor* Instigator, UStatusEffectsManagerComponent* ManagerComponent)
 {
+	if (!IsValid(TargetActor) || !ManagerComponent)
+	{
+		return false;
+	}
+	
 	const UWorld* World = UObject::GetWorld();
 
 	if (World && !World->IsPreviewWorld())
@@ -46,18 +51,23 @@ void UStatusEffect::StartEffect()
 			StartTimer(World, StatusEffectData.Duration);
 		}
 
-		HandleEffectActivation();
+		StatusEffectData.TargetActor = TargetActor;
+		StatusEffectData.Instigator = Instigator;
+		StatusEffectData.OwningManager = ManagerComponent;
+		return HandleEffectActivation();
 	}
+
+	return false;
 }
 
-void UStatusEffect::FinishEffect(const EDeactivationReason Reason)
+void UStatusEffect::Deactivate(const EDeactivationReason Reason)
 {
 	HandleEffectDeactivation(Reason);
 	OnStatusEffectDeactivated.Broadcast(this);
 	this->ConditionalBeginDestroy();
 }
 
-void UStatusEffect::ReStartEffect()
+void UStatusEffect::ReActivate()
 {
 	const UWorld* World = GetWorld();
 
@@ -182,14 +192,15 @@ bool UStatusEffect::RemoveStacks(int32 Amount)
 
 	if (StatusEffectData.CurrentStacks == 0)
 	{
-		FinishEffect(EDeactivationReason::Stacks);
+		Deactivate(EDeactivationReason::Stacks);
 	}
 
 	return true;
 }
 
-void UStatusEffect::HandleEffectActivation_Implementation()
+bool UStatusEffect::HandleEffectActivation_Implementation()
 {
+	return true;
 }
 
 void UStatusEffect::HandleEffectDeactivation_Implementation(const EDeactivationReason Reason)
@@ -211,7 +222,7 @@ void UStatusEffect::HandleStacksDecrease_Implementation(const int32 Amount)
 void UStatusEffect::StartTimer(const UWorld* World, const float Duration)
 {
 	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindUObject(this, &UStatusEffect::FinishEffect, EDeactivationReason::Time);
+	TimerDelegate.BindUObject(this, &UStatusEffect::Deactivate, EDeactivationReason::Time);
 	World->GetTimerManager().SetTimer(StatusEffectData.DurationTimerHandle,
 	                                  TimerDelegate,
 	                                  Duration,

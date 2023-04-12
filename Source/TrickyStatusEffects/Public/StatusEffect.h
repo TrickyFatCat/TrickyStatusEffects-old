@@ -143,11 +143,11 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStacksNumberChangedSignature OnStacksRemoved;
 
-	void StartEffect();
+	bool Activate(AActor* TargetActor, AActor* Instigator, UStatusEffectsManagerComponent* ManagerComponent);
 
-	void FinishEffect(const EDeactivationReason Reason);
+	void Deactivate(const EDeactivationReason Reason);
 
-	void ReStartEffect();
+	void ReActivate();
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	AActor* GetInstigator() const { return StatusEffectData.Instigator; }
@@ -211,9 +211,9 @@ protected:
 
 	/**Called when the status effect was activated.*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
-	void HandleEffectActivation();
+	bool HandleEffectActivation();
 
-	virtual void HandleEffectActivation_Implementation();
+	virtual bool HandleEffectActivation_Implementation();
 
 	/**Called when the status effect was deactivated.*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")

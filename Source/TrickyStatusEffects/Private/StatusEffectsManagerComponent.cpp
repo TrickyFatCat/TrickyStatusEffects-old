@@ -59,7 +59,7 @@ UStatusEffect* UStatusEffectsManagerComponent::ApplyEffect(const TSubclassOf<USt
 	if (IsValid(Effect) && EffectUniqueness != EStatusEffectUniqueness::Normal)
 	{
 		Effect->AddStacks(StacksAmount);
-		Effect->ReStartEffect();
+		Effect->ReActivate();
 		return Effect;
 	}
 
@@ -539,17 +539,13 @@ UStatusEffect* UStatusEffectsManagerComponent::CreateEffect(const TSubclassOf<US
 
 	UStatusEffect* NewEffect = NewObject<UStatusEffect>(this, EffectClass);
 
-	if (!NewEffect)
+	if (!NewEffect || !NewEffect->Activate(GetOwner(), Instigator, this))
 	{
 		return nullptr;
 	}
 
-	NewEffect->SetInstigator(Instigator);
-	NewEffect->SetTargetActor(GetOwner());
-	NewEffect->SetOwningManager(this);
-	NewEffect->OnStatusEffectDeactivated.AddDynamic(this, &UStatusEffectsManagerComponent::HandleEffectDeactivation);
 	ActiveEffects.Emplace(NewEffect);
-	NewEffect->StartEffect();
+	NewEffect->OnStatusEffectDeactivated.AddDynamic(this, &UStatusEffectsManagerComponent::HandleEffectDeactivation);
 	OnStatusEffectApplied.Broadcast(NewEffect, GetOwner(), Instigator);
 
 	return NewEffect;
@@ -562,7 +558,7 @@ bool UStatusEffectsManagerComponent::FinishEffect(UStatusEffect* Effect,
 {
 	if (bRemoveAllStacks)
 	{
-		Effect->FinishEffect(bCustomReason ? EDeactivationReason::Custom : EDeactivationReason::Remove);
+		Effect->Deactivate(bCustomReason ? EDeactivationReason::Custom : EDeactivationReason::Remove);
 		return true;
 	}
 
