@@ -25,9 +25,8 @@ class TRICKYSTATUSEFFECTS_API UStatusEffectsLibrary : public UBlueprintFunctionL
 	/**Applies status effect or reapplies already applied effect.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	static UStatusEffect* ApplyStatusEffect(const TSubclassOf<UStatusEffect> EffectClass,
-	                                      AActor* TargetActor,
-	                                      AActor* Instigator,
-	                                      const int32 StacksAmount);
+	                                        AActor* TargetActor,
+	                                        AActor* Instigator);
 
 	/**Removes all status effects regardless of time and stacks.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
@@ -112,13 +111,12 @@ class TRICKYSTATUSEFFECTS_API UStatusEffectsLibrary : public UBlueprintFunctionL
 	bool GetAllStatusEffectsOfClass(AActor* TargetActor,
 	                                TSubclassOf<UStatusEffect> EffectClass,
 	                                TArray<UStatusEffect*>& Effects);
-	
+
 	/**Checks if the status effect of a given class and instigator is active.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	static bool HasStatusEffectOfClassByInstigator(AActor* TargetActor,
 	                                               TSubclassOf<UStatusEffect> EffectClass,
 	                                               const AActor* Instigator);
-
 
 
 	/**Returns the status effect instance of the given class and instigator.*/
@@ -134,5 +132,3 @@ class TRICKYSTATUSEFFECTS_API UStatusEffectsLibrary : public UBlueprintFunctionL
 	                                            const AActor* Instigator,
 	                                            TArray<UStatusEffect*>& Effects);
 };
-
-

@@ -34,9 +34,7 @@ public:
 
 	/**Applies a new status effect or reapplies already applied effect.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")
-	UStatusEffect* ApplyEffect(TSubclassOf<UStatusEffect> EffectClass,
-	                         AActor* Instigator,
-	                         const int32 StacksAmount);
+	UStatusEffect* ApplyEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator);
 
 	/**Removes all status effects regardless of time and stacks.*/
 	UFUNCTION(BlueprintCallable, Category="StatusEffectsManager")

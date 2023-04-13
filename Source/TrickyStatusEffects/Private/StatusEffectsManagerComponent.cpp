@@ -30,9 +30,7 @@ void UStatusEffectsManagerComponent::TickComponent(float DeltaTime,
 #endif
 }
 
-UStatusEffect* UStatusEffectsManagerComponent::ApplyEffect(const TSubclassOf<UStatusEffect> EffectClass,
-                                                           AActor* Instigator,
-                                                           const int32 StacksAmount)
+UStatusEffect* UStatusEffectsManagerComponent::ApplyEffect(const TSubclassOf<UStatusEffect> EffectClass, AActor* Instigator)
 {
 	if (!EffectClass)
 	{

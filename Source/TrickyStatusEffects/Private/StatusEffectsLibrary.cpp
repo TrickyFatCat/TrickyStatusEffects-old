@@ -17,10 +17,9 @@ UStatusEffectsManagerComponent* UStatusEffectsLibrary::GetStatusEffectsManager(A
 	return TargetActor->FindComponentByClass<UStatusEffectsManagerComponent>();
 }
 
-UStatusEffect* UStatusEffectsLibrary::ApplyStatusEffect(TSubclassOf<UStatusEffect> EffectClass,
+UStatusEffect* UStatusEffectsLibrary::ApplyStatusEffect(const TSubclassOf<UStatusEffect> EffectClass,
                                                         AActor* TargetActor,
-                                                        AActor* Instigator,
-                                                        const int32 StacksAmount)
+                                                        AActor* Instigator)
 {
 	if (!IsValid(TargetActor))
 	{
@@ -34,7 +33,7 @@ UStatusEffect* UStatusEffectsLibrary::ApplyStatusEffect(TSubclassOf<UStatusEffec
 		return nullptr;
 	}
 
-	return StatusEffectsManagerComponent->ApplyEffect(EffectClass, Instigator, StacksAmount);
+	return StatusEffectsManagerComponent->ApplyEffect(EffectClass, Instigator);
 }
 
 bool UStatusEffectsLibrary::RemoveAllStatusEffects(AActor* TargetActor, const bool bCustomReason)
