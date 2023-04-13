@@ -78,7 +78,7 @@ void UStatusEffect::ReActivate()
 
 	FTimerManager& TimerManager = World->GetTimerManager();
 
-	switch (StatusEffectData.TimerReActivationBehavior)
+	switch (StatusEffectData.DurationReActivationBehavior)
 	{
 	case EReActivationBehavior::Custom:
 		break;
@@ -116,7 +116,7 @@ void UStatusEffect::ReActivate()
 		}
 	}
 
-	HandleEffectReactivation(StatusEffectData.TimerReActivationBehavior);
+	HandleEffectReactivation(StatusEffectData.DurationReActivationBehavior);
 	OnStatusEffectReactivated.Broadcast(this);
 }
 

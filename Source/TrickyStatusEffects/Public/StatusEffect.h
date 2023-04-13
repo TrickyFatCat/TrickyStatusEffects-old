@@ -85,7 +85,7 @@ struct FStatusEffectData
 
 	/**Determines how the duration will be recalculated when the status effect was reapplied.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="bIsInfinite"))
-	EReActivationBehavior TimerReActivationBehavior = EReActivationBehavior::None;
+	EReActivationBehavior DurationReActivationBehavior = EReActivationBehavior::None;
 
 	/**Toggles if the status effect can be stacked.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
@@ -188,7 +188,7 @@ public:
 	float GetElapsedTime() const;
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
-	EReActivationBehavior GetReactivationBehavior() const { return StatusEffectData.TimerReActivationBehavior; }
+	EReActivationBehavior GetReactivationBehavior() const { return StatusEffectData.DurationReActivationBehavior; }
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	bool IsStackable() const { return StatusEffectData.bIsStackable; }
