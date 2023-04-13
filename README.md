@@ -57,7 +57,7 @@ By default it has one variable `StatusEffectData`, this structure contains:
 6. `IsInfinite` - toggles if the status effect has infinite duration or not;
 7. `Duration` - duration of the effect;
 8. `DurationTimerHandle` - a duration timer handle of the status effect;
-9. `ReActivationBehavior` - determines how the duration will be recalculated when the status effect was reapplied.
+9. `DurationReActivationBehavior` - determines how the duration will be recalculated when the status effect was reapplied.
    1. `None` - no changes;
    2. `Custom` - by default do nothing, but can be overriden;
    3. `Reset` - reset the timer;
@@ -66,6 +66,12 @@ By default it has one variable `StatusEffectData`, this structure contains:
 11. `MaxStacks` - maximum amount of stacks;
 12. `InitialStacks` - initial amount of stacks;
 13. `CurrentStacks` - current amount of stacks;
+14. `StacksReActivationBehavior` - determines how current stacks will be recalculated when the status effect was reapplied.
+    1. `None` - no changes;
+    2. `Custom` - by default do nothing, but can be overriden;
+    3. `Reset` - reset the current stacks to initial value;
+    4. `Add` - add delta stacks to current stacks;
+15. `DeltaStacks` - amount of stacks added per re-activation;
 
 #### Functions
 
