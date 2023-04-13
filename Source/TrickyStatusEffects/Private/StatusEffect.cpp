@@ -41,7 +41,7 @@ bool UStatusEffect::Activate(AActor* TargetActor, AActor* Instigator, UStatusEff
 	{
 		return false;
 	}
-	
+
 	const UWorld* World = UObject::GetWorld();
 
 	if (World && !World->IsPreviewWorld())
@@ -78,12 +78,12 @@ void UStatusEffect::ReActivate()
 
 	FTimerManager& TimerManager = World->GetTimerManager();
 
-	switch (StatusEffectData.ReActivationBehavior)
+	switch (StatusEffectData.TimerReActivationBehavior)
 	{
-	case EReactivationBehavior::Custom:
+	case EReActivationBehavior::Custom:
 		break;
 
-	case EReactivationBehavior::Add:
+	case EReActivationBehavior::Add:
 		if (TimerManager.IsTimerActive(StatusEffectData.DurationTimerHandle))
 		{
 			const float DeltaDuration = GetRemainingTime();
@@ -93,7 +93,7 @@ void UStatusEffect::ReActivate()
 		}
 		break;
 
-	case EReactivationBehavior::Reset:
+	case EReActivationBehavior::Reset:
 		if (TimerManager.IsTimerActive(StatusEffectData.DurationTimerHandle))
 		{
 			TimerManager.ClearTimer(StatusEffectData.DurationTimerHandle);
@@ -102,7 +102,21 @@ void UStatusEffect::ReActivate()
 		break;
 	}
 
-	HandleEffectReactivation(StatusEffectData.ReActivationBehavior);
+	if (StatusEffectData.bIsStackable)
+	{
+		switch (StatusEffectData.StacksReActivationBehavior)
+		{
+		case EReActivationBehavior::Add:
+			AddStacks(StatusEffectData.DeltaStacks);
+			break;
+
+		case EReActivationBehavior::Reset:
+			AddStacks(StatusEffectData.MaxStacks - StatusEffectData.CurrentStacks);
+			break;
+		}
+	}
+
+	HandleEffectReactivation(StatusEffectData.TimerReActivationBehavior);
 	OnStatusEffectReactivated.Broadcast(this);
 }
 
@@ -197,7 +211,7 @@ void UStatusEffect::HandleEffectDeactivation_Implementation(const EDeactivationR
 {
 }
 
-void UStatusEffect::HandleEffectReactivation_Implementation(const EReactivationBehavior ReactivationBehavior)
+void UStatusEffect::HandleEffectReactivation_Implementation(const EReActivationBehavior ReactivationBehavior)
 {
 }
 

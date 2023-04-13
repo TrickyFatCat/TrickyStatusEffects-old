@@ -20,7 +20,7 @@ enum class EStatusEffectType : uint8
 };
 
 UENUM(BlueprintType)
-enum class EReactivationBehavior : uint8
+enum class EReActivationBehavior : uint8
 {
 	None UMETA(ToolTip="No changes."),
 	Custom UMETA(ToolTip="By default no changes, but can be overriden."),
@@ -85,7 +85,7 @@ struct FStatusEffectData
 
 	/**Determines how the duration will be recalculated when the status effect was reapplied.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
-	EReactivationBehavior ReActivationBehavior = EReactivationBehavior::None;
+	EReActivationBehavior TimerReActivationBehavior = EReActivationBehavior::None;
 
 	/**Toggles if the status effect can be stacked.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
@@ -98,8 +98,16 @@ struct FStatusEffectData
 		meta=(EditCondition="bIsStackable", ClampMin="1"))
 	int32 InitialStacks = 1;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StatusEffect")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="bIsStackable"))
 	int32 CurrentStacks = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="bIsStackable"))
+	EReActivationBehavior StacksReActivationBehavior = EReActivationBehavior::Add;
+
+	/**Amount of stacks added per re-activation*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect",
+		meta=(EditCondition="bIsStackable && StacksReActivationBehavior==EReActivationBehavior::Add"))
+	int32 DeltaStacks = 1;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectActionPerformedSignature, class UStatusEffect*, StatusEffect)
@@ -180,7 +188,7 @@ public:
 	float GetElapsedTime() const;
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
-	EReactivationBehavior GetReactivationBehavior() const { return StatusEffectData.ReActivationBehavior; }
+	EReActivationBehavior GetReactivationBehavior() const { return StatusEffectData.TimerReActivationBehavior; }
 
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	bool IsStackable() const { return StatusEffectData.bIsStackable; }
@@ -217,9 +225,9 @@ protected:
 
 	/**Called when the status effect was reactivated.*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")
-	void HandleEffectReactivation(const EReactivationBehavior ReactivationBehavior);
+	void HandleEffectReactivation(const EReActivationBehavior ReactivationBehavior);
 
-	virtual void HandleEffectReactivation_Implementation(const EReactivationBehavior ReactivationBehavior);
+	virtual void HandleEffectReactivation_Implementation(const EReActivationBehavior ReactivationBehavior);
 
 	/**Called when number of stacks was increased.*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="StatusEffect")

@@ -58,7 +58,6 @@ UStatusEffect* UStatusEffectsManagerComponent::ApplyEffect(const TSubclassOf<USt
 
 	if (IsValid(Effect) && EffectUniqueness != EStatusEffectUniqueness::Normal)
 	{
-		Effect->AddStacks(StacksAmount);
 		Effect->ReActivate();
 		return Effect;
 	}
