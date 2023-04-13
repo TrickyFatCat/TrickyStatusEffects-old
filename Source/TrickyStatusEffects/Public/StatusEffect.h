@@ -84,7 +84,7 @@ struct FStatusEffectData
 	FTimerHandle DurationTimerHandle;
 
 	/**Determines how the duration will be recalculated when the status effect was reapplied.*/
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="StatusEffect", meta=(EditCondition="bIsInfinite"))
 	EReActivationBehavior TimerReActivationBehavior = EReActivationBehavior::None;
 
 	/**Toggles if the status effect can be stacked.*/
