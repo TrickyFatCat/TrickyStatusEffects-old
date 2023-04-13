@@ -111,7 +111,7 @@ void UStatusEffect::ReActivate()
 			break;
 
 		case EReActivationBehavior::Reset:
-			AddStacks(StatusEffectData.MaxStacks - StatusEffectData.CurrentStacks);
+			StatusEffectData.CurrentStacks = StatusEffectData.InitialStacks;
 			break;
 		}
 	}
