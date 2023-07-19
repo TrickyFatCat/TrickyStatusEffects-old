@@ -3,7 +3,9 @@
 
 #include "StatusEffectsManagerComponent.h"
 
+#include "GameFramework/Actor.h"
 #include "StatusEffect.h"
+#include "Engine/Engine.h"
 
 UStatusEffectsManagerComponent::UStatusEffectsManagerComponent()
 {
