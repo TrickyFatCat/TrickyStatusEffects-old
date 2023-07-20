@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Templates/SubclassOf.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "StatusEffect.h"
+
 #include "StatusEffectsLibrary.generated.h"
 
 class UStatusEffectsManagerComponent;
