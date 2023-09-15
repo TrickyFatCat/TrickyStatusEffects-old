@@ -202,14 +202,14 @@ bool UStatusEffectsLibrary::RemoveStatusEffectByObject(AActor* TargetActor,
 {
 	if (!IsValid(TargetActor))
 	{
-		return nullptr;
+		return false;
 	}
 
 	UStatusEffectsManagerComponent* StatusEffectsManagerComponent = GetStatusEffectsManager(TargetActor);
 
 	if (!StatusEffectsManagerComponent)
 	{
-		return nullptr;
+		return false;
 	}
 
 	return StatusEffectsManagerComponent->RemoveEffectByObject(StatusEffect,
