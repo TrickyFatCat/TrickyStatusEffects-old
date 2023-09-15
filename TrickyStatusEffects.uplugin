@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 5,
-	"VersionName": "2.1.1",
+	"Version": 6,
+	"VersionName": "2.1.2",
 	"FriendlyName": "TrickyStatusEffects",
 	"Description": "A plugin which helps to implement status effects in your prototype",
 	"Category": "TrickyPrototyping",
