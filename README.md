@@ -1,5 +1,7 @@
 ﻿# TrickyStatusEffects 
 
+This verision is not supported you can find a new one [**here**](https://github.com/TrickyFatCat/TrickyStatusEffects)
+
 A plugin which helps to implement status effects in your prototype.
 
 ## Installation
